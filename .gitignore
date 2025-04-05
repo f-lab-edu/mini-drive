@@ -44,8 +44,8 @@
 
 # ----------------------------------
 # Gradle Wrapper
-# git에 반드시 포함되도록 강제!
 # ----------------------------------
+gradle/
 !gradle/wrapper/gradle-wrapper.properties
 !gradle/wrapper/gradle-wrapper.jar
 !gradlew
