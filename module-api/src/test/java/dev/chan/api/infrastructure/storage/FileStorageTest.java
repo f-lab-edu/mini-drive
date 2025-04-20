@@ -2,13 +2,12 @@ package dev.chan.api.infrastructure.storage;
 
 
 import dev.chan.api.application.file.FileStorage;
+import dev.chan.api.application.file.key.S3KeyGenerator;
+import dev.chan.api.application.file.key.FileKeyGenerator;
 import dev.chan.api.domain.file.FileMetaData;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,19 +20,18 @@ import static org.assertj.core.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class FileStorageTest {
 
-    @Mock
-    FileStorage fileStorage;
 
     @Test
     @DisplayName("파일 메타데이터 저장_성공")
-    void test_store(){
+    void test_store() {
         // given
+        FileKeyGenerator fileKeyGenerator = new S3KeyGenerator();
+        FileStorage storage = new LocalFileStorage("uploads",fileKeyGenerator);
         MultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
         FileMetaData fileMetaData = createFileMetaData();
-        Mockito.doReturn(fileMetaData).when(fileStorage).store(file);
 
         // when
-        FileMetaData metaData = fileStorage.store(file);
+        FileMetaData metaData = storage.store(file,"d1234");
 
         // then
         assertThat(metaData).isNotNull();

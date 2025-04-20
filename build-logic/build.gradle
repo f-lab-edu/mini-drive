@@ -17,6 +17,12 @@ gradlePlugin {
             id = 'convention.spring-boot'
             implementationClass = "SpringBootConventionPlugin"
         }
+
+        awsS3Convention {
+            id = 'convention.aws-s3'
+            implementationClass = "AwsS3ConventionPlugin"
+
+        }
     }
 }
 
@@ -24,7 +30,7 @@ gradlePlugin {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5' // Spring Boot 플러그인 의존성 (버전은 실제 사용하는 버전으로 변경)
+    implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5'
 }
 
 // Java 버전 설정

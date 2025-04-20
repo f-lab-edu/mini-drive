@@ -1,26 +1,25 @@
 package dev.chan.api.domain.file;
 
-import dev.chan.api.web.file.request.FileMetaDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@Builder
 @AllArgsConstructor
-public class FileMetaData {
+@NoArgsConstructor
+public abstract class DriveItem {
 
+    private String id;
     private String name;
-    private String relativePath;
-    private String fileKey;
-    private long size;
-    private String parentId;
     private String mimeType;
+    private String relativePath;
+    private String driveId;
 
+    private FolderItem parent;
 
 
 }

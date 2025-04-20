@@ -1,5 +1,7 @@
 package dev.chan.api.domain.file;
 
+import java.util.List;
+
 public interface FileUploadRepository {
-    FileMetaData storeAll();
+    List<? extends DriveItem> saveAll(List<? extends DriveItem> items);
 }

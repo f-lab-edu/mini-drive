@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Builder
 public class FileUploadResponse {
-    private String name;
+    private String driveId;
     private List<FileMetaData> metaDataList;
 }

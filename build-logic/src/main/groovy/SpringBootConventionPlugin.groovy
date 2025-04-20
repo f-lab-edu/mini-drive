@@ -12,16 +12,15 @@ class SpringBootConventionPlugin implements Plugin<Project> {
             mavenCentral()
         }
 
-        project.dependencies {
-            implementation 'org.springframework.boot:spring-boot-starter-web'
-            implementation 'org.springframework.boot:spring-boot-starter'
-            testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        project.dependencies.with {
+            add("implementation", "org.springframework.boot:spring-boot-starter")
+            add("implementation", "org.springframework.boot:spring-boot-starter-web")
+            add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
 
-            compileOnly 'org.projectlombok:lombok'
-            annotationProcessor 'org.projectlombok:lombok'
-
-            testCompileOnly 'org.projectlombok:lombok'
-            testAnnotationProcessor 'org.projectlombok:lombok'
+            add("compileOnly", "org.projectlombok:lombok")
+            add("annotationProcessor", "org.projectlombok:lombok")
+            add("testCompileOnly", "org.projectlombok:lombok")
+            add("testAnnotationProcessor", "org.projectlombok:lombok")
         }
 
         project.tasks.withType(Test).configureEach {
