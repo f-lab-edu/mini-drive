@@ -2,6 +2,7 @@ package dev.chan.api.infrastructure.storage;
 
 import dev.chan.api.application.file.FileStorage;
 import dev.chan.api.application.file.key.FileKeyGenerator;
+import dev.chan.api.config.FileStorageProperties;
 import dev.chan.api.domain.file.FileMetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@RequiredArgsConstructor
 public class LocalFileStorage implements FileStorage {
 
-    private final String baseDir;
     private final FileKeyGenerator fileKeyGenerator;
+    private final FileStorageProperties properties;
 
     @Autowired
-    public LocalFileStorage(@Value("${file.base-dir}") String baseDir,FileKeyGenerator fileKeyGenerator) {
-        this.baseDir = baseDir;
+    public LocalFileStorage(FileStorageProperties properties,FileKeyGenerator fileKeyGenerator) {
+        this.properties = properties;
         this.fileKeyGenerator = fileKeyGenerator;
     }
 
@@ -29,7 +31,8 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public FileMetaData store(MultipartFile file, String driveId) {
-        String fileKey = fileKeyGenerator.generateFileKey(baseDir,driveId ,file.getOriginalFilename());
+        String baseDir = properties.getBaseDir();
+        String fileKey = fileKeyGenerator.generateFileKey(baseDir, driveId, file.getOriginalFilename());
 
         FileMetaData metaData = FileMetaData.builder()
                 .size(file.getSize())

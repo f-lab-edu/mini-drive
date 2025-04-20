@@ -33,7 +33,7 @@ class FileUploadServiceTest {
     FileUploadRepository fileUploadRepository;
 
     @InjectMocks
-    FileUploadServiceImpl fileUploadService;
+    FileUploadService fileUploadService;
 
     @Test
     @DisplayName("유효한 파일을 업로드하면, 파일과 메타데이터는 저장되고 썸네일이벤트가 발행된다.")
@@ -45,12 +45,12 @@ class FileUploadServiceTest {
         doReturn(metaData).when(fileStorage).storeAll(anyList(),any());
 
         // when
-        FileUploadResponse uploaded = fileUploadService.upload(getUploadCommand(List.of(file)));
+        List<FileMetaData> uploaded = fileUploadService.upload(getUploadCommand(List.of(file)));
 
         // then
         assertThat(uploaded).isNotNull();
-        assertThat(uploaded.getMetaDataList()).hasSize(1);
-        assertThat(uploaded.getMetaDataList().getFirst().getName()).isEqualTo("test.txt");
+        assertThat(uploaded).hasSize(1);
+        assertThat(uploaded.getFirst().getName()).isEqualTo("test.txt");
 
         // 썸네일 서비스 호츨확인
         verify(thumbnailEventPublisher).publish(metaData);
@@ -68,8 +68,8 @@ class FileUploadServiceTest {
         doReturn(metaDataList).when(fileStorage).storeAll(anyList(),any());
 
         // when
-        FileUploadResponse upload = fileUploadService.upload(getUploadCommand(List.of(file)));
-        FileMetaData metaData = upload.getMetaDataList().getFirst();
+        List<FileMetaData> upload = fileUploadService.upload(getUploadCommand(List.of(file)));
+        FileMetaData metaData = upload.getFirst();
 
         // then
         assertThat(upload).isNotNull();
@@ -120,10 +120,10 @@ class FileUploadServiceTest {
         doReturn(metaDataList).when(fileStorage).storeAll(anyList(),any());
 
         // when
-        FileUploadResponse upload = fileUploadService.upload(getUploadCommand(List.of(file1, file2)));
+        List<FileMetaData> upload = fileUploadService.upload(getUploadCommand(List.of(file1, file2)));
 
         // then
-        assertThat(upload.getMetaDataList()).hasSize(2);
+        assertThat(upload).hasSize(2);
         verify(thumbnailEventPublisher).publish(anyList());
         verify(fileUploadRepository).saveAll(anyList());
     }

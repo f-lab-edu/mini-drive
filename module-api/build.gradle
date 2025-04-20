@@ -2,14 +2,9 @@
 plugins {
     id 'convention.aws-s3'
     id 'convention.spring-boot'
+    id 'convention.java-toolchain'
 }
 
 repositories {
     mavenCentral() // 반드시 명시!
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-
 }

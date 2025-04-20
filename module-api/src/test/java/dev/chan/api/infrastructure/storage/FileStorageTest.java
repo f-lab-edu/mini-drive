@@ -4,6 +4,7 @@ package dev.chan.api.infrastructure.storage;
 import dev.chan.api.application.file.FileStorage;
 import dev.chan.api.application.file.key.S3KeyGenerator;
 import dev.chan.api.application.file.key.FileKeyGenerator;
+import dev.chan.api.config.FileStorageProperties;
 import dev.chan.api.domain.file.FileMetaData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,8 @@ public class FileStorageTest {
     void test_store() {
         // given
         FileKeyGenerator fileKeyGenerator = new S3KeyGenerator();
-        FileStorage storage = new LocalFileStorage("uploads",fileKeyGenerator);
+
+        FileStorage storage = new LocalFileStorage(new FileStorageProperties(),fileKeyGenerator);
         MultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
         FileMetaData fileMetaData = createFileMetaData();
 
