@@ -1,6 +1,7 @@
 package dev.chan.api.application.file;
 
 import dev.chan.api.application.file.command.UploadCommand;
+import dev.chan.api.application.file.key.S3KeyGenerator;
 import dev.chan.api.domain.file.FileMetaData;
 import dev.chan.api.domain.file.FileUploadRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,10 @@ public class FileUploadService {
         }
 
         return metaDataList;
+    }
+
+    public String generateUploadUrl(UploadCommand uploadCommand) {
+        // !TODO URL S3 presignedURL 반환 로직을 구현 예정입니다.
+        return "";
     }
 }

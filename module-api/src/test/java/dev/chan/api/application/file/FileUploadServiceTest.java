@@ -4,6 +4,7 @@ package dev.chan.api.application.file;
 import dev.chan.api.application.file.command.UploadCommand;
 import dev.chan.api.domain.file.FileMetaData;
 import dev.chan.api.domain.file.FileUploadRepository;
+import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
 import dev.chan.api.infrastructure.storage.LocalFileStorage;
 import dev.chan.api.web.file.request.FileMetaDataDTO;
 import dev.chan.api.web.file.response.FileUploadResponse;
@@ -31,6 +32,9 @@ class FileUploadServiceTest {
 
     @Mock
     FileUploadRepository fileUploadRepository;
+
+    @Mock
+    S3PresignedUrlGenerator mockGenerator;
 
     @InjectMocks
     FileUploadService fileUploadService;
@@ -138,6 +142,23 @@ class FileUploadServiceTest {
                         .mimeType(mimeType)
                         .build()
         );
+    }
+    @Test
+    @DisplayName("upload를 요청하면, presignedUrl을 반환한다.")
+    void should_return_presigned_url(){
+
+        MultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
+
+        // given
+        String key = "uploads/test.txt";
+
+        doReturn("https://example.com/test.txt").when(mockGenerator).generatePresignedUrl(any());
+
+        String url = fileUploadService.generateUploadUrl(getUploadCommand(List.of(file))).toString();
+
+        assertThat(url).isEqualTo("https://example.com/test.txt");
+
+
     }
 
     private UploadCommand getUploadCommand(List<MultipartFile> file) {
