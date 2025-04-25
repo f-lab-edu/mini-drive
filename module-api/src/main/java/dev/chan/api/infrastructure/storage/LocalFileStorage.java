@@ -37,7 +37,6 @@ public class LocalFileStorage implements FileStorage {
         FileMetaData metaData = FileMetaData.builder()
                 .size(file.getSize())
                 .name(file.getOriginalFilename())
-                .fileKey(fileKey)
                 .build();
 
 

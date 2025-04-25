@@ -13,7 +13,4 @@ public class S3KeyGenerator implements FileKeyGenerator{
         return String.format("%s/%s/%s/%s_%s", baseDir, driveId, LocalDate.now(), UUID.randomUUID(), originalFilename);
     }
 
-    @Override
-    public void generateThumbnailFileKey(String baseDir, String fileName) {
-    }
 }

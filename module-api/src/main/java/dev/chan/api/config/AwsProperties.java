@@ -3,6 +3,7 @@ package dev.chan.api.config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "aws")
 @Getter
@@ -18,6 +19,17 @@ public class AwsProperties {
     public static class S3 {
         private final String bucket;
         private final String uploadPrefix;
+    }
+
+    public String getBucketName(){
+        if (s3 == null) {
+            throw new IllegalStateException("AWS S3 properties are not initialized properly.");
+        }
+        return s3.getBucket();
+    }
+
+    public String getUploadPrefix(){
+        return s3.getUploadPrefix();
     }
 
 }
