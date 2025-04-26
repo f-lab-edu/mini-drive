@@ -1,6 +1,6 @@
 package dev.chan.api.application.file.command;
 
-import dev.chan.api.web.file.request.FileMetaDataDTO;
+import dev.chan.api.web.file.request.FileMetaDataDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +18,9 @@ public class UploadCommand {
     String driveId;
     String parentId;
     List<MultipartFile> files;
-    List<FileMetaDataDTO> entries;
+    List<FileMetaDataDto> entries;
 
-    public UploadCommand(String driveId, String parentId, List<MultipartFile> files, List<FileMetaDataDTO> entries) {
+    public UploadCommand(String driveId, String parentId, List<MultipartFile> files, List<FileMetaDataDto> entries) {
         this.files = files;
         this.driveId = driveId;
         this.parentId = parentId;

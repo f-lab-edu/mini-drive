@@ -1,9 +1,10 @@
 package dev.chan.api.application.file.key;
 
+import dev.chan.api.domain.file.FileKeySpecification;
 import org.springframework.stereotype.Component;
 
 public interface FileKeyGenerator {
 
-    String generateFileKey(String baseDir, String fileName, String originalFilename);
+    String generateFileKey(FileKeySpecification specification);
 
 }

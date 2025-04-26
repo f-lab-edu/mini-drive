@@ -29,12 +29,10 @@ public class FileUploadService {
 
     private final FileStorage fileStorage;
     private final FileUploadRepository fileUploadRepository;
-    private final S3PresignedUrlGenerator s3PresignedUrlGenerator;
 
     public List<FileMetaData> upload(UploadCommand uploadCommand) {
         List<FileMetaData> metaDataList = fileStorage.storeAll(uploadCommand.getFiles(), uploadCommand.getDriveId());
         fileUploadRepository.saveAll(List.of());
-
         return metaDataList;
     }
 }

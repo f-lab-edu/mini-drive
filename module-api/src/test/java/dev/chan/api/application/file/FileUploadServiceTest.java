@@ -2,13 +2,10 @@ package dev.chan.api.application.file;
 
 
 import dev.chan.api.application.file.command.UploadCommand;
-import dev.chan.api.application.file.key.S3KeyGenerator;
-import dev.chan.api.config.AwsConfig;
 import dev.chan.api.domain.file.FileMetaData;
 import dev.chan.api.domain.file.FileUploadRepository;
-import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
 import dev.chan.api.infrastructure.storage.LocalFileStorage;
-import dev.chan.api.web.file.request.FileMetaDataDTO;
+import dev.chan.api.web.file.request.FileMetaDataDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +37,7 @@ class FileUploadServiceTest {
     void uploadingValidFile_returnsMetaDataInResponseAndPublishThumbnailEvent() {
         // given
         MultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
-        List <FileMetaData> metaData = createMetaDataList("test.txt","text/plain" );
+        List <FileMetaData> metaData = createMetaDataList();
 
         doReturn(metaData).when(fileStorage).storeAll(anyList(),any());
 
@@ -50,7 +47,7 @@ class FileUploadServiceTest {
         // then
         assertThat(uploaded).isNotNull();
         assertThat(uploaded).hasSize(1);
-        assertThat(uploaded.getFirst().getName()).isEqualTo("test.txt");
+        assertThat(uploaded.getFirst().getOriginalFileName()).isEqualTo("test.txt");
 
         // 메타데이터 저장 호출 확인
         verify(fileUploadRepository).saveAll(anyList());
@@ -61,7 +58,7 @@ class FileUploadServiceTest {
     void shouldSaveMetadata_whenFileUploadSuccess(){
         // given
         MultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
-        List <FileMetaData> metaDataList = createMetaDataList("test.txt","text/plain" );
+        List <FileMetaData> metaDataList = createMetaDataList();
         doReturn(metaDataList).when(fileStorage).storeAll(anyList(),any());
 
         // when
@@ -70,7 +67,7 @@ class FileUploadServiceTest {
 
         // then
         assertThat(upload).isNotNull();
-        assertThat(metaData.getName()).isEqualTo(file.getOriginalFilename());
+        assertThat(metaData.getOriginalFileName()).isEqualTo(file.getOriginalFilename());
         assertThat(metaData.getMimeType()).isEqualTo(file.getContentType());
         assertThat(metaData.getSize()).isEqualTo(file.getSize());
     }
@@ -95,8 +92,8 @@ class FileUploadServiceTest {
         MultipartFile file1 = new MockMultipartFile("file", "file1.txt", "text/plain", "hello".getBytes());
         MultipartFile file2 = new MockMultipartFile("file", "file2.txt", "text/plain", "hello".getBytes());
 
-        FileMetaData meta1 = FileMetaData.builder().name("file1.txt").mimeType("text/plain").size(5L).build();
-        FileMetaData meta2 = FileMetaData.builder().name("file2.txt").mimeType("text/plain").size(5L).build();
+        FileMetaData meta1 = FileMetaData.builder().originalFileName("file1.txt").mimeType("text/plain").size(5L).build();
+        FileMetaData meta2 = FileMetaData.builder().originalFileName("file2.txt").mimeType("text/plain").size(5L).build();
         List<FileMetaData> metaDataList = List.of(meta1, meta2);
 
         doReturn(metaDataList).when(fileStorage).storeAll(anyList(),any());
@@ -109,21 +106,21 @@ class FileUploadServiceTest {
         verify(fileUploadRepository).saveAll(anyList());
     }
 
-    private List<FileMetaData> createMetaDataList(String fileName, String mimeType){
+    private List<FileMetaData> createMetaDataList(){
         return List.of(
                 FileMetaData.builder()
-                        .name(fileName)
+                        .originalFileName("test.txt")
                         .relativePath("")
                         .parentId("root")
                         .size(5L)
-                        .mimeType(mimeType)
+                        .mimeType("text/plain")
                         .build()
         );
     }
 
 
     private UploadCommand getUploadCommand(List<MultipartFile> file) {
-        return new UploadCommand("d1234", "f1234", file, List.of(new FileMetaDataDTO("","text/plain")) );
+        return new UploadCommand("d1234", "f1234", file, List.of(new FileMetaDataDto("","text/plain")) );
     }
 
 }

@@ -13,50 +13,46 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class PresignedUrlServiceTest {
+@SpringBootTest
+class PresignedUrlServiceIntegrationTest {
 
-    @Mock
-    S3PresignedUrlGenerator urlGenerator;
+    @Autowired
+    private S3PresignedUrlGenerator urlGenerator;
 
-    @Mock
-    AwsProperties properties;
-
-    @Mock
-    S3KeyGenerator keyGenerator;
-
-    @InjectMocks
-    PresignedUrlService presignedUrlService;
+    @Autowired
+    private PresignedUrlService presignedUrlService;
 
     @Test
-    @DisplayName("메타데이터가 유효하면 프리사인드 URL을 ")
-    void shouldCreateValidPresignedUrl (){
+    @DisplayName("PresignedUrlService가 파일 메타데이터와 멀티파트 파일로 presigned URL들을 생성한다")
+    void shouldGenerattePresignedUrl(){
         // given
-        String bucketName = "test-bucket";
-        String fileKey = "test-file.txt";
-
-        doReturn(bucketName).when(properties).getBucketName();
-        doReturn("uploads").when(properties).getUploadPrefix();
-        doReturn("uploads/test-file.txt").when(keyGenerator).generateFileKey(any());
-        doReturn("https://" + bucketName + ".s3.amazonaws.com/" + fileKey).when(urlGenerator).createPresignedUrl(any());
+        String driveId = "d1234";
+        PresignedUrlCommand presignedUrlCommand = createPresignedUrlCommand();
 
         // when
-        List<String> presignedUrl = presignedUrlService.generateUploadUrls(createPresignedUrlCommand());
+        List<String> presignedUrls = presignedUrlService.generateUploadUrls(presignedUrlCommand);
 
         // then
-        assertThat(presignedUrl).hasSize(1);
-        assertThat(presignedUrl).contains("https://" + bucketName + ".s3.amazonaws.com/" + fileKey);
+        assertThat(presignedUrls)
+                .isNotNull()
+                .hasSize(1);
 
-        verify(keyGenerator, times(1)).generateFileKey(any());
-        verify(urlGenerator, times(1)).createPresignedUrl(any());
+        String generatedUrl = presignedUrls.getFirst();
+        assertThat(generatedUrl)
+                .contains(LocalDate.now().toString())
+                .contains(driveId);
     }
 
     private PresignedUrlCommand createPresignedUrlCommand() {
@@ -70,6 +66,7 @@ class PresignedUrlServiceTest {
         FileMetaDataDto metaDataDto = new FileMetaDataDto("test.txt","text/plain");
         return PresignedUrlCommand.builder()
                 .driveId("d1234")
+                .parentId("")
                 .fileMetaDataDtoList(List.of(metaDataDto))
                 .multipartFiles(List.of(multipartFile))
                 .build();

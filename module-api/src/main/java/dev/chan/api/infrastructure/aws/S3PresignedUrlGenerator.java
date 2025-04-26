@@ -1,10 +1,9 @@
 package dev.chan.api.infrastructure.aws;
 
-import dev.chan.api.application.file.key.S3KeyGenerator;
-import dev.chan.api.config.AwsProperties;
+import dev.chan.api.application.file.PresignedUrlGenerator;
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.PresignedUrlSpecification;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.flogger.Flogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -13,47 +12,44 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class S3PresignedUrlGenerator {
+public class S3PresignedUrlGenerator implements PresignedUrlGenerator {
 
-    private final S3KeyGenerator s3KeyGenerator;
-    private final AwsProperties awsProperties;
-
-    /**
-     * presignedUrl 생성 함수
-     * @param driveId - 드라이브 ID
-     * @param metaData - 파일 메타데이터
-     * @return String presignedUrl
-     */
-    public String createPresignedUrl(String driveId, FileMetaData metaData) {
+    @Override
+    public String createPresignedUrl(PresignedUrlSpecification urlSpecification) {
         try (S3Presigner s3Presigner = S3Presigner.create()) {
+            PutObjectRequest objectRequest = getPutObjectRequest(
+                    urlSpecification.fileKey(),
+                    urlSpecification.metaData(),
+                    urlSpecification.bucketName());
 
-            String bucketName = awsProperties.getBucketName();
-            String fileKey = s3KeyGenerator.generateFileKey(awsProperties.getUploadPrefix(), driveId, metaData.getOriginalFileName());
-
-            PutObjectRequest objectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileKey)
-                    .metadata(metaData.toMap())
-                    .build();
-
-            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder().
-                    signatureDuration(Duration.ofMinutes(10))
-                    .putObjectRequest(objectRequest)
-                    .build();
-
+            PutObjectPresignRequest presignRequest = getPutObjectPresignRequest(objectRequest);
             PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
             String myURL = presignedRequest.url().toString();
-
             log.info("Presigned URL to upload a file to: [{}]", myURL);
             log.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
-
             return presignedRequest.url().toExternalForm();
         }
     }
+
+    private PutObjectRequest getPutObjectRequest(String fileKey, FileMetaData metaData, String bucketName) {
+        return PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileKey)
+                .metadata(metaData.toMap())
+                .build();
+    }
+
+    private PutObjectPresignRequest getPutObjectPresignRequest(PutObjectRequest objectRequest) {
+        return PutObjectPresignRequest.builder().
+                signatureDuration(Duration.ofMinutes(10))
+                .putObjectRequest(objectRequest)
+                .build();
+    }
+
+
 }

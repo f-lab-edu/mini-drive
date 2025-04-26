@@ -3,12 +3,11 @@ package dev.chan.api.config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "aws")
 @Getter
 @RequiredArgsConstructor
-public class AwsProperties {
+public class AwsProperties implements FileStorageProperties {
 
     private final String region;
     private final String profile;
@@ -21,6 +20,7 @@ public class AwsProperties {
         private final String uploadPrefix;
     }
 
+    @Override
     public String getBucketName(){
         if (s3 == null) {
             throw new IllegalStateException("AWS S3 properties are not initialized properly.");
@@ -28,6 +28,7 @@ public class AwsProperties {
         return s3.getBucket();
     }
 
+    @Override
     public String getUploadPrefix(){
         return s3.getUploadPrefix();
     }

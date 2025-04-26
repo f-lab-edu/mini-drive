@@ -3,6 +3,7 @@ package dev.chan.api.infrastructure.storage;
 import dev.chan.api.application.file.FileStorage;
 import dev.chan.api.application.file.key.FileKeyGenerator;
 import dev.chan.api.config.FileStorageProperties;
+import dev.chan.api.domain.file.FileKeySpecification;
 import dev.chan.api.domain.file.FileMetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,12 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public FileMetaData store(MultipartFile file, String driveId) {
-        String baseDir = properties.getBaseDir();
-        String fileKey = fileKeyGenerator.generateFileKey(baseDir, driveId, file.getOriginalFilename());
+        String baseDir = properties.getUploadPrefix();
+        String fileKey = fileKeyGenerator.generateFileKey(new FileKeySpecification(baseDir, driveId, file.getOriginalFilename()));
 
         FileMetaData metaData = FileMetaData.builder()
                 .size(file.getSize())
-                .name(file.getOriginalFilename())
+                .originalFileName(file.getOriginalFilename())
                 .build();
 
 

@@ -1,5 +1,6 @@
 package dev.chan.api.application.file.key;
 
+import dev.chan.api.domain.file.FileKeySpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ public class FileKeyGeneratorTest {
         FileKeyGenerator fileKeyGenerator = new S3KeyGenerator();
 
         // when
-        String fileKey = fileKeyGenerator.generateFileKey("uploads", "driveId", "test.txt");
+        String fileKey = fileKeyGenerator.generateFileKey(new FileKeySpecification("uploads", "driveId", "test.txt"));
 
         // then
         assertThat(fileKey).isNotNull();

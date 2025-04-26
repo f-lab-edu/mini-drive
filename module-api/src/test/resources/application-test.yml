@@ -3,12 +3,9 @@ spring:
   profiles:
     active: test
 
-file:
-  base-dir: "uploads"
-
 aws:
   profile: dev
   region: ap-northeast-2
   s3:
     bucket: mini-drive-storage
-    upload-prefix: uploads/
+    upload-prefix: uploads

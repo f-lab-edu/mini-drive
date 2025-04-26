@@ -1,24 +1,18 @@
 package dev.chan.api.infrastructure.aws;
 
-import dev.chan.api.application.file.key.S3KeyGenerator;
-import dev.chan.api.config.AwsConfig;
 import dev.chan.api.config.AwsProperties;
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.PresignedUrlSpecification;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import software.amazon.awssdk.services.s3.model.S3KeyFilter;
 
 import java.time.LocalDate;
-import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -54,10 +48,10 @@ class S3PresignedUrlGeneratorTest {
     @DisplayName("driveId와 metaData로 URL을 생성한다.")
     void shouldGenerateUrl_whenDriveIdWithMetadata(){
         // given
-        String driveId = "d1234";
+        String fileKey = "test/test.pdf";
 
         FileMetaData metaData = FileMetaData.builder()
-                .name("test")
+                .originalFileName("test")
                 .relativePath("")
                 .size(10)
                 .parentId("root")
@@ -66,11 +60,16 @@ class S3PresignedUrlGeneratorTest {
                 .build();
 
         // when
-        String generatedUrl = generator.createPresignedUrl(driveId, metaData);
+        String generatedUrl = generator.createPresignedUrl(
+                new PresignedUrlSpecification(
+                        awsProperties.getBucketName(),
+                        fileKey,
+                        metaData)
+        );
         
         // then
-        assertThat(generatedUrl).isNotNull();
-        assertThat(generatedUrl).contains(driveId);
-        assertThat(generatedUrl).contains(LocalDate.now().toString());
+        assertThat(generatedUrl).isNotNull()
+                .contains(fileKey)
+                .contains(LocalDate.now().toString());
     }
 }
