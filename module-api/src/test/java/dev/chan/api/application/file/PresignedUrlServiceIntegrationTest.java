@@ -1,18 +1,12 @@
 package dev.chan.api.application.file;
 
 import dev.chan.api.application.file.command.PresignedUrlCommand;
-import dev.chan.api.application.file.key.S3KeyGenerator;
-import dev.chan.api.config.AwsProperties;
 import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
 import dev.chan.api.web.file.request.FileMetaDataDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -20,10 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class PresignedUrlServiceIntegrationTest {
@@ -36,7 +28,7 @@ class PresignedUrlServiceIntegrationTest {
 
     @Test
     @DisplayName("PresignedUrlService가 파일 메타데이터와 멀티파트 파일로 presigned URL들을 생성한다")
-    void shouldGenerattePresignedUrl(){
+    void shouldGenerattePresignedUrl() {
         // given
         String driveId = "d1234";
         PresignedUrlCommand presignedUrlCommand = createPresignedUrlCommand();
@@ -63,7 +55,7 @@ class PresignedUrlServiceIntegrationTest {
                 "file-content".getBytes()
         );
 
-        FileMetaDataDto metaDataDto = new FileMetaDataDto("test.txt","text/plain");
+        FileMetaDataDto metaDataDto = new FileMetaDataDto("test.txt", "text/plain");
         return PresignedUrlCommand.builder()
                 .driveId("d1234")
                 .parentId("")

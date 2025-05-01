@@ -1,21 +1,11 @@
 package dev.chan.api.infrastructure.storage;
 
 
-import dev.chan.api.application.file.FileStorage;
-import dev.chan.api.application.file.key.S3KeyGenerator;
-import dev.chan.api.application.file.key.FileKeyGenerator;
-import dev.chan.api.config.FileStorageProperties;
 import dev.chan.api.domain.file.FileMetaData;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +31,7 @@ public class FileStorageTest {
 
     }*/
 
-    public static FileMetaData createFileMetaData(){
+    public static FileMetaData createFileMetaData() {
         return FileMetaData.builder()
                 .originalFileName("test.txt")
                 .fileKey(UUID.randomUUID().toString())

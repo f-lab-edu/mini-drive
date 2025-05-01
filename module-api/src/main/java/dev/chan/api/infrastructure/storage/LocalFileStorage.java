@@ -40,7 +40,6 @@ public class LocalFileStorage implements FileStorage {
                 .originalFileName(file.getOriginalFilename())
                 .build();
 
-
         storage.put(metaData.getFileKey(),metaData);
 
         return metaData;

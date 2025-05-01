@@ -5,15 +5,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileKeyGeneratorTest {
 
 
     @Test
     @DisplayName("파일 key 생성 성공")
-    void generateFileKey_success(){
+    void generateFileKey_success() {
         // given
         FileKeyGenerator fileKeyGenerator = new S3KeyGenerator();
 

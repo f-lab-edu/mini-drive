@@ -31,14 +31,14 @@ public class FileMetaData {
                 .build();
     }
 
-    public Map<String,String> toMap(){
-
+    public Map<String, String> toMap() {
         return Map.of(
-                "relativePath",relativePath
-                ,"size",String.valueOf(size),
-                "parentId",parentId
-                ,"mimeType",mimeType
-                ,"originalFileName",originalFileName);
+                "relativePath", relativePath,
+                "size", String.valueOf(size),
+                "parentId", parentId,
+                "mimeType", mimeType,
+                "fileKey", fileKey,
+                "originalFileName", originalFileName);
     }
 
 

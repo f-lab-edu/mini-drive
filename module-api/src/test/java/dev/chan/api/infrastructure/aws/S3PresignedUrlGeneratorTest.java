@@ -30,9 +30,10 @@ class S3PresignedUrlGeneratorTest {
         log.info("AWS S3 Bucket: {}", awsProperties.getS3().getBucket());
         log.info("AWS Region: {}", awsProperties.getRegion());
     }
+
     @Test
     @DisplayName("")
-    void shouldGenerateUrl_whenDriveId(){
+    void shouldGenerateUrl_whenDriveId() {
         // given
         awsProperties.getBucketName();
 
@@ -46,7 +47,7 @@ class S3PresignedUrlGeneratorTest {
 
     @Test
     @DisplayName("driveId와 metaData로 URL을 생성한다.")
-    void shouldGenerateUrl_whenDriveIdWithMetadata(){
+    void shouldGenerateUrl_whenDriveIdWithMetadata() {
         // given
         String fileKey = "test/test.pdf";
 
@@ -66,7 +67,7 @@ class S3PresignedUrlGeneratorTest {
                         fileKey,
                         metaData)
         );
-        
+
         // then
         assertThat(generatedUrl).isNotNull()
                 .contains(fileKey)

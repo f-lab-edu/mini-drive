@@ -38,7 +38,7 @@ class PresignedUrlServiceTest {
 
     @Test
     @DisplayName("메타데이터가 유효하면 프리사인드 URL을 ")
-    void shouldCreateValidPresignedUrl (){
+    void shouldCreateValidPresignedUrl() {
         // given
         String bucketName = "test-bucket";
         String fileKey = "test-file.txt";
@@ -67,7 +67,7 @@ class PresignedUrlServiceTest {
                 "file-content".getBytes()
         );
 
-        FileMetaDataDto metaDataDto = new FileMetaDataDto("test.txt","text/plain");
+        FileMetaDataDto metaDataDto = new FileMetaDataDto("test.txt", "text/plain");
         return PresignedUrlCommand.builder()
                 .driveId("d1234")
                 .fileMetaDataDtoList(List.of(metaDataDto))
