@@ -1,0 +1,26 @@
+name: ✨ Feature Request
+description: 새로운 기능을 제안하거나 기존 기능을 개선합니다.
+title: "[FEAT] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 📝 기능 요약
+      description: 어떤 기능을 원하시나요?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 🙋 왜 필요한가요?
+      description: 이 기능이 왜 필요한지, 어떤 문제를 해결하는지 알려주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 제안하는 해결 방안
+      description: 제안하고 싶은 구체적인 구현이나 인터페이스가 있다면 설명해주세요.

@@ -1,0 +1,13 @@
+name: 🐞 Bug Report
+description: 시스템에서 발생한 문제를 신고합니다.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 문제 설명
+      description: 발생한 버그를 간결하고 명확하게 설명해주세요.
+      placeholder: 어떤 상황에서 어떤 문제가 발생했는지...
+    validations:
+      required: true
