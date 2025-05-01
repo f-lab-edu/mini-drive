@@ -1,13 +1,10 @@
 
 plugins {
+    id 'convention.aws-s3'
     id 'convention.spring-boot'
+    id 'convention.java-toolchain'
 }
 
 repositories {
-    gradlePluginPortal()  // Spring Boot 플러그인 찾을 수 있도록
-    mavenCentral()        // Maven Central에도 Spring Boot 플러그인이 있음
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    mavenCentral() // 반드시 명시!
 }

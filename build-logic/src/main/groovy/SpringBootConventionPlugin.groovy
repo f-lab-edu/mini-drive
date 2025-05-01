@@ -1,5 +1,6 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 
 class SpringBootConventionPlugin implements Plugin<Project> {
     void apply(Project project) {
@@ -11,10 +12,19 @@ class SpringBootConventionPlugin implements Plugin<Project> {
             mavenCentral()
         }
 
-        project.dependencies {
-            implementation 'org.springframework.boot:spring-boot-starter-web'
-            implementation 'org.springframework.boot:spring-boot-starter'
-            testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        project.dependencies.with {
+            add("implementation", "org.springframework.boot:spring-boot-starter")
+            add("implementation", "org.springframework.boot:spring-boot-starter-web")
+            add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
+
+            add("compileOnly", "org.projectlombok:lombok")
+            add("annotationProcessor", "org.projectlombok:lombok")
+            add("testCompileOnly", "org.projectlombok:lombok")
+            add("testAnnotationProcessor", "org.projectlombok:lombok")
+        }
+
+        project.tasks.withType(Test).configureEach {
+            useJUnitPlatform()
         }
 
     }

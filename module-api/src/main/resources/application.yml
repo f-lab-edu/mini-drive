@@ -1,0 +1,6 @@
+aws:
+  profile: dev
+  region: ap-northeast-2
+  s3:
+    bucket: mini-drive-storage
+    upload-prefix: uploads
