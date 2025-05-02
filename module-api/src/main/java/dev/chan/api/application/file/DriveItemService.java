@@ -1,17 +1,13 @@
 package dev.chan.api.application.file;
 
 import dev.chan.api.application.file.command.UploadCallbackCommand;
-import dev.chan.api.application.file.command.UploadCommand;
 import dev.chan.api.application.file.factory.DriveItemFactory;
-import dev.chan.api.domain.file.*;
+import dev.chan.api.domain.file.DriveItem;
+import dev.chan.api.domain.file.DriveItemRepository;
 import dev.chan.api.domain.file.exception.DriveItemNotFoundException;
-import dev.chan.api.domain.folder.FolderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.config.InactiveConfigDataAccessException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Slf4j

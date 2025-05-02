@@ -1,6 +1,8 @@
 aws:
   profile: dev
   region: ap-northeast-2
+  secret:
+    name: dev/aws/credentials
   s3:
-    bucket: mini-drive-storage
+    bucket: mini-drive-dev-upload
     upload-prefix: uploads

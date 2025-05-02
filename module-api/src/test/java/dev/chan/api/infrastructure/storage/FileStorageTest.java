@@ -33,8 +33,7 @@ public class FileStorageTest {
 
     public static FileMetaData createFileMetaData() {
         return FileMetaData.builder()
-                .originalFileName("test.txt")
-                .fileKey(UUID.randomUUID().toString())
+                .name("test.txt")
                 .size(1024)
                 .build();
     }

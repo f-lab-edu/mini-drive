@@ -21,9 +21,7 @@ public class UploadCallbackCommand {
     public FileMetaData toMetadata() {
         return FileMetaData.builder()
                 .size(this.size)
-                .parentId(this.parentId)
                 .mimeType(this.mimeType)
-                .fileKey(this.fileKey)
                 .build();
     }
 

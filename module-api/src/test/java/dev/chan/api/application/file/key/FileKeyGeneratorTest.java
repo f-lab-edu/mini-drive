@@ -16,7 +16,7 @@ public class FileKeyGeneratorTest {
     @DisplayName("파일 key 생성 성공")
     void generateFileKey_success() {
         // given
-        FileKeyGenerator fileKeyGenerator = new S3KeyGenerator();
+        S3KeyGenerator fileKeyGenerator = new S3KeyGenerator();
 
         // when
         String fileKey = fileKeyGenerator.generateFileKey(new FileKeySpecification("uploads", "driveId", "test.txt"));

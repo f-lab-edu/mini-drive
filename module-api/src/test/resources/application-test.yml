@@ -1,11 +1,12 @@
 # application.yml
 spring:
   profiles:
-    active: test
+    active: dev
 
 aws:
   profile: dev
   region: ap-northeast-2
   s3:
-    bucket: mini-drive-storage
+    bucket: mini-drive-dev-upload
     upload-prefix: uploads
+
