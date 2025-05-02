@@ -52,7 +52,8 @@ class S3PresignedUrlGeneratorTest {
                         "d1234",
                         "root",
                         fileKey,
-                        metaData)
+                        metaData
+                )
         );
 
         // then
