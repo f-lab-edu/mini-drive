@@ -1,12 +1,9 @@
 package dev.chan.api.infrastructure.aws;
 
-import dev.chan.api.config.AwsConfig;
-import dev.chan.api.domain.file.FileMetaData;
 import dev.chan.api.domain.file.PresignedUrlResponse;
 import dev.chan.api.domain.file.PresignedUrlSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -20,7 +17,7 @@ import java.time.Instant;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class S3PresignedUrlGenerator{
+public class S3PresignedUrlGenerator {
 
     private final S3Presigner presigner;
 
@@ -33,10 +30,11 @@ public class S3PresignedUrlGenerator{
         Instant expiredAt = Instant.now().plus(expiredAfter);
 
         // PresignedPutObjectRequest - 최종 presingedUrl 생성 요청
-        PresignedPutObjectRequest presignedRequest = generatePresignedPutObjectRequest(pubObjectRequest, presigner,expiredAfter);
+        PresignedPutObjectRequest presignedRequest = generatePresignedPutObjectRequest(pubObjectRequest, presigner, expiredAfter);
 
-        if (presignedRequest.isBrowserExecutable()){
-            // TODO : 브라우저 호환성 검사
+        if (!presignedRequest.isBrowserExecutable()) {
+            log.warn("생성된 Presigned URL이 브라우저에서 실행되지 않을 수 있습니다. spec={}", spec);
+            throw new IllegalStateException("생성된 Presigned URL은 브라우저에서 실행되지 않습니다.");
         }
 
 
@@ -45,10 +43,10 @@ public class S3PresignedUrlGenerator{
 
     }
 
-     private PresignedPutObjectRequest generatePresignedPutObjectRequest(PutObjectRequest putObjectRequest, S3Presigner presigner, Duration expiredAfter){
-         PutObjectPresignRequest presignedRequest = buildPutObjectPresignRequest(putObjectRequest,expiredAfter);
-         return presigner.presignPutObject(presignedRequest);
-     }
+    private PresignedPutObjectRequest generatePresignedPutObjectRequest(PutObjectRequest putObjectRequest, S3Presigner presigner, Duration expiredAfter) {
+        PutObjectPresignRequest presignedRequest = buildPutObjectPresignRequest(putObjectRequest, expiredAfter);
+        return presigner.presignPutObject(presignedRequest);
+    }
 
     /**
      * pubObjectPresignedRequest 객체를 생성하여 반환
@@ -69,12 +67,12 @@ public class S3PresignedUrlGenerator{
         return PutObjectRequest.builder()
                 .bucket(spec.bucketName())
                 .key(spec.fileKey())
-                .metadata(spec.metaData().toMap())
+                .metadata(spec.toS3Metadata())
                 .build();
     }
 
-    private PresignedUrlResponse buildResponse(PresignedUrlSpecification spec, URL url, Instant expiredAt){
-        return  PresignedUrlResponse.from(spec, url.toExternalForm(), expiredAt);
+    private PresignedUrlResponse buildResponse(PresignedUrlSpecification spec, URL url, Instant expiredAt) {
+        return PresignedUrlResponse.from(spec, url.toExternalForm(), expiredAt);
 
     }
 }
