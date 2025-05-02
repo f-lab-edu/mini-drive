@@ -29,61 +29,29 @@ public class PresignedUrlService {
     private final AwsProperties properties;
 
 
+    /**
+     * presignedUrl을 생성해 List로 반환합니다.
+     * @param presignedUrlCommand
+     * @return List<presingedUrlResponse> - presignedUrl을 포함한 클라이언트에 필요한 응답 데이터 리스트
+     */
     public List<PresignedUrlResponse> generateUploadUrls(PresignedUrlCommand presignedUrlCommand) {
         log.info("PresignedUrlCommand = {}", presignedUrlCommand);
 
-        return presignedUrlCommand.getFileMetaDataDtoList().parallelStream().map(metaDto -> {
-            FileKeySpecification keySpecification = new FileKeySpecification(
-                    presignedUrlCommand.getDriveId(),
-                    properties.getUploadPrefix(),
-                    metaDto.getName());
+        return presignedUrlCommand.getFileMetaDataDtoList().stream().map(metaDto -> {
+            FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
 
-            log.info("keySpecification={}", keySpecification);
+            log.info("keySpecification={}", keySpec);
 
-            String key = keyGenerator.generateFileKey(keySpecification);
+            String key = keyGenerator.generateFileKey(keySpec);
 
             log.info("key={}", key);
 
-            PresignedUrlSpecification UrlSpecification = new PresignedUrlSpecification(
-                    properties.getBucketName(),
-                    presignedUrlCommand.getDriveId(),
-                    presignedUrlCommand.getParentId(),
-                    key,
-                    metaDto.toMetadata());
+            PresignedUrlSpecification urlSpec = PresignedUrlSpecification.toUrlSpec(properties.getBucketName(), presignedUrlCommand, key, metaDto.toMetadata());
 
-            log.info("UrlSpecification={}", UrlSpecification);
+            log.info("UrlSpecification={}", urlSpec);
 
-            return urlGenerator.createPresignedUrl(UrlSpecification);
-
+            return urlGenerator.createPresignedUrl(urlSpec);
         }).toList();
+
     }
-/*
-    public List<String> generateUploadUrls(PresignedUrlCommand presignedUrlCommand) {
-        List<FileMetaDataDto> fileMetaDataDtoList = presignedUrlCommand.getFileMetaDataDtoList();
-
-        List<String> presignedUrls = new ArrayList<>();
-        for (int i = 0; i < fileMetaDataDtoList.size(); i++) {
-            FileMetaDataDto fileMetaDataDto = fileMetaDataDtoList.get(i);
-
-            FileKeySpecification fileKeySpecification = new FileKeySpecification(
-                    presignedUrlCommand.getDriveId(),
-                    properties.getUploadPrefix(),
-                    presignedUrlCommand.getName()
-                    );
-
-            String fileKey = keyGenerator.generateFileKey(fileKeySpecification);
-
-            FileMetaData fileMetaData = FileMetaData.of(fileMetaDataDto, presignedUrlCommand.getParentId());
-
-            PresignedUrlSpecification presignedUrlSpecification = new PresignedUrlSpecification(
-                    properties.getBucketName(),
-                    fileKey,
-                    fileMetaData
-            );
-
-            presignedUrls.add(urlGenerator.createPresignedUrl(presignedUrlSpecification));
-        }
-
-        return presignedUrls;
-    }*/
 }

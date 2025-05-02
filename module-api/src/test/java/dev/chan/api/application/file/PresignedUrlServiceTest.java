@@ -66,6 +66,8 @@ class PresignedUrlServiceTest {
         assertThat(first.mimeType()).isEqualTo(metadata.getMimeType());
         assertThat(first.size()).isEqualTo(metadata.getSize());
 
+        verify(keyGenerator, times(1)).generateFileKey(any());
+        verify(urlGenerator, times(1)).createPresignedUrl(any());
     }
 
     public PresignedUrlSpecification presignedUrlSpecification(){
@@ -94,46 +96,5 @@ class PresignedUrlServiceTest {
                 .parentId("parent")
                 .fileMetaDataDtoList(List.of(metaDataDto()))
                 .build();
-    }
-
-    @Test
-    @DisplayName("메타데이터가 유효하면 프리사인드 URL을 생성한다. ")
-    void shouldCreateValidPresignedUrl() {
-        // given
-        String bucketName = "test-bucket";
-        String fileKey = "test-file.txt";
-
-        doReturn(bucketName).when(properties).getBucketName();
-        doReturn("uploads").when(properties).getUploadPrefix();
-        doReturn("uploads/test-file.txt").when(keyGenerator).generateFileKey(any());
-        doReturn("https://" + bucketName + ".s3.amazonaws.com/" + fileKey).when(urlGenerator).createPresignedUrl(any());
-
-        // when
-        List<PresignedUrlResponse> responses = presignedUrlService.generateUploadUrls(presignedUrlCommand());
-
-        // then
-        assertThat(responses).hasSize(1);
-        PresignedUrlResponse first = responses.getFirst();
-        assertThat(first.url()).contains("https://" + bucketName + ".s3.amazonaws.com/" + fileKey);
-
-        verify(keyGenerator, times(1)).generateFileKey(any());
-        verify(urlGenerator, times(1)).createPresignedUrl(any());
-    }
-
-
-
-    @Getter
-    @Setter
-    private static class PresignedUrlRequest {
-        private String driveId;
-        private String mimeType;
-        private String relativePath;
-        private MultipartFile file;
-
-        public static PresignedUrlCommand toCommand(PresignedUrlRequest presignedRequest) {
-            return PresignedUrlCommand.builder()
-                    .driveId(presignedRequest.getDriveId())
-                    .build();
-        }
     }
 }

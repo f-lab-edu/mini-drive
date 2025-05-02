@@ -47,22 +47,7 @@ class PresignedUrlServiceIntegrationTest {
     }
 
     public PresignedUrlCommand createPresignedUrlCommand() {
-        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", "file-content".getBytes());
-
         FileMetaDataDto metaDataDto = metaDataDto();
         return PresignedUrlCommand.builder().driveId("d1234").parentId("").fileMetaDataDtoList(List.of(metaDataDto)).build();
-    }
-
-    @Getter
-    @Setter
-    private static class PresignedUrlRequest {
-        private String driveId;
-        private String mimeType;
-        private String relativePath;
-        private MultipartFile file;
-
-        public static PresignedUrlCommand toCommand(PresignedUrlRequest presignedRequest) {
-            return PresignedUrlCommand.builder().driveId(presignedRequest.getDriveId()).build();
-        }
     }
 }
