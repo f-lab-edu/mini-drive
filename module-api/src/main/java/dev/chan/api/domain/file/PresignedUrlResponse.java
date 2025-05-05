@@ -10,7 +10,7 @@ public record PresignedUrlResponse(
         String fileKey,
         String name,
         Long size,
-        String mimeType,
+        MimeType mimeType,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         String url,
         Instant expiredAt

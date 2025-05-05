@@ -7,8 +7,6 @@ import dev.chan.api.domain.file.PresignedUrlResponse;
 import dev.chan.api.domain.file.PresignedUrlSpecification;
 import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
 import dev.chan.api.web.file.request.FileMetaDataDto;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.List;
@@ -69,6 +66,7 @@ class PresignedUrlServiceTest {
         verify(keyGenerator, times(1)).generateFileKey(any());
         verify(urlGenerator, times(1)).createPresignedUrl(any());
     }
+
 
     public PresignedUrlSpecification presignedUrlSpecification(){
         return new PresignedUrlSpecification("upload/",

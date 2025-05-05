@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @ToString
 public class FileMetaData {
-    private String mimeType;
+    private MimeType mimeType;
     private String name;
     private long size;
 }
