@@ -1,11 +1,14 @@
 package dev.chan.api.application.file;
 
 import dev.chan.api.application.file.command.PresignedUrlCommand;
-import dev.chan.api.application.file.key.FileKeyGenerator;
+import dev.chan.api.application.file.key.S3KeyGenerator;
+import dev.chan.api.config.AwsProperties;
 import dev.chan.api.config.FileStorageProperties;
 import dev.chan.api.domain.file.FileKeySpecification;
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.PresignedUrlResponse;
 import dev.chan.api.domain.file.PresignedUrlSpecification;
+import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
 import dev.chan.api.web.file.request.FileMetaDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,45 +17,41 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PresignedUrlService {
 
-    private final FileKeyGenerator fileKeyGenerator;
-    private final PresignedUrlGenerator urlGenerator;
-    private final FileStorageProperties properties;
+    private final S3KeyGenerator keyGenerator;
+    private final S3PresignedUrlGenerator urlGenerator;
+    private final AwsProperties properties;
 
-    public List<String> generateUploadUrls(PresignedUrlCommand presignedUrlCommand) {
 
-        List<FileMetaDataDto> fileMetaDataDtoList = presignedUrlCommand.getFileMetaDataDtoList();
+    /**
+     * presignedUrl을 생성해 List로 반환합니다.
+     * @param presignedUrlCommand
+     * @return List<presingedUrlResponse> - presignedUrl을 포함한 클라이언트에 필요한 응답 데이터 리스트
+     */
+    public List<PresignedUrlResponse> generateUploadUrls(PresignedUrlCommand presignedUrlCommand) {
+        log.info("PresignedUrlCommand = {}", presignedUrlCommand);
 
-        List<MultipartFile> multipartFiles = presignedUrlCommand.getMultipartFiles();
+        return presignedUrlCommand.getFileMetaDataDtoList().stream().map(metaDto -> {
+            FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
 
-        List<String> presignedUrls = new ArrayList<>();
-        for (int i = 0; i < fileMetaDataDtoList.size(); i++) {
-            FileMetaDataDto fileMetaDataDto = fileMetaDataDtoList.get(i);
-            MultipartFile multipartFile = multipartFiles.get(i);
+            log.info("keySpecification={}", keySpec);
 
-            FileKeySpecification fileKeySpecification = new FileKeySpecification(
-                    presignedUrlCommand.getDriveId(),
-                    properties.getUploadPrefix(),
-                    multipartFile.getOriginalFilename());
+            String key = keyGenerator.generateFileKey(keySpec);
 
-            String fileKey = fileKeyGenerator.generateFileKey(fileKeySpecification);
+            log.info("key={}", key);
 
-            FileMetaData fileMetaData = FileMetaData.of(fileMetaDataDto, multipartFile, presignedUrlCommand.getParentId(), fileKey);
+            PresignedUrlSpecification urlSpec = PresignedUrlSpecification.toUrlSpec(properties.getBucketName(), presignedUrlCommand, key, metaDto.toMetadata());
 
-            PresignedUrlSpecification presignedUrlSpecification = new PresignedUrlSpecification(
-                    properties.getBucketName(),
-                    fileKey,
-                    fileMetaData
-            );
+            log.info("UrlSpecification={}", urlSpec);
 
-            presignedUrls.add(urlGenerator.createPresignedUrl(presignedUrlSpecification));
-        }
+            return urlGenerator.createPresignedUrl(urlSpec);
+        }).toList();
 
-        return presignedUrls;
     }
 }

@@ -1,17 +1,9 @@
 package dev.chan.api.domain.file;
 
 
-public record FileKeySpecification(
-        String driveId,
-        String uploadPrefix,
-        String originalFilename
-) {
+public record FileKeySpecification(String driveId, String uploadPrefix, String name) {
 
-    public FileKeySpecification (String driveId, String uploadPrefix, String originalFilename) {
-        this.driveId = driveId;
-        this.uploadPrefix = uploadPrefix;
-        this.originalFilename = originalFilename;
+    public static FileKeySpecification toKeySpec(String driveId, String name, String uploadPrefix) {
+        return new FileKeySpecification(driveId, uploadPrefix, name);
     }
-
-
 }

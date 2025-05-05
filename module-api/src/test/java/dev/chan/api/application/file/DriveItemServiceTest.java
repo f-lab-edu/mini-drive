@@ -2,21 +2,17 @@ package dev.chan.api.application.file;
 
 
 import dev.chan.api.application.file.command.UploadCallbackCommand;
-import dev.chan.api.application.file.command.UploadCommand;
-import dev.chan.api.domain.file.*;
+import dev.chan.api.domain.file.DriveItem;
+import dev.chan.api.domain.file.DriveItemRepository;
 import dev.chan.api.domain.file.exception.DriveItemNotFoundException;
 import dev.chan.api.infrastructure.storage.LocalFileStorage;
-import dev.chan.api.web.file.request.FileMetaDataDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,18 +64,6 @@ class DriveItemServiceTest {
         assertThatThrownBy( ()-> driveItemService.create(command))
                 .isInstanceOf(DriveItemNotFoundException.class)
                 .hasMessageContaining(parent.getId());
-    }
-
-    private List<FileMetaData> createMetaDataList() {
-        return List.of(
-                FileMetaData.builder()
-                        .originalFileName("test.txt")
-                        .relativePath("")
-                        .parentId("root")
-                        .size(5L)
-                        .mimeType("text/plain")
-                        .build()
-        );
     }
 
     private DriveItem file() {

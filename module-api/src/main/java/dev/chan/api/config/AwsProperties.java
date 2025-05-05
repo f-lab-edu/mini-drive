@@ -1,5 +1,6 @@
 package dev.chan.api.config;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,11 +8,29 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "aws")
 @Getter
 @RequiredArgsConstructor
-public class AwsProperties implements FileStorageProperties {
+public class AwsProperties {
 
+    @NotNull
     private final String region;
+
+    @NotNull
     private final String profile;
+
+    @NotNull
     private final S3 s3;
+
+    @NotNull
+    private final Secret secret;
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class Secret{
+        private final String name;
+    }
+
+    public String getSecretName(){
+        return secret.getName();
+    }
 
     @Getter
     @RequiredArgsConstructor
@@ -20,15 +39,11 @@ public class AwsProperties implements FileStorageProperties {
         private final String uploadPrefix;
     }
 
-    @Override
+
     public String getBucketName(){
-        if (s3 == null) {
-            throw new IllegalStateException("AWS S3 properties are not initialized properly.");
-        }
         return s3.getBucket();
     }
 
-    @Override
     public String getUploadPrefix(){
         return s3.getUploadPrefix();
     }

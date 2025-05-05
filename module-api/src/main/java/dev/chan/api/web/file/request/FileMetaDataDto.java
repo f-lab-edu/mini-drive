@@ -6,16 +6,19 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileMetaDataDto {
-    String relativePath;
+    String name;
+    Long size;
     String mimeType;
 
-    public FileMetaData toFileMetaData() {
+    public FileMetaData toMetadata(){
         return FileMetaData.builder()
-                .relativePath(relativePath)
-                .mimeType(mimeType)
+                .name(this.name)
+                .size(this.size)
+                .mimeType(this.mimeType)
                 .build();
     }
 }

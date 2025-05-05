@@ -1,18 +1,28 @@
 package dev.chan.api.domain.file;
 
+import dev.chan.api.application.file.command.PresignedUrlCommand;
+import dev.chan.api.application.file.command.UploadCallbackCommand;
 import lombok.Getter;
+import lombok.Value;
 
-public record PresignedUrlSpecification (
-    String bucketName,
-    String fileKey,
-    FileMetaData metaData)
-{
-    public PresignedUrlSpecification(String bucketName, String fileKey, FileMetaData metaData) {
-        this.bucketName = bucketName;
-        this.fileKey = fileKey;
-        this.metaData = metaData;
+import java.util.Map;
+
+public record PresignedUrlSpecification(
+        String bucketName,
+        String driveId,
+        String parentId,
+        String fileKey,
+        FileMetaData metaData) {
+    public static PresignedUrlSpecification toUrlSpec(String bucketName, PresignedUrlCommand command, String fileKey, FileMetaData meta) {
+        return new PresignedUrlSpecification(bucketName, command.getDriveId(), command.getParentId(), fileKey, meta);
     }
-
-
+    public Map<String,String> toS3Metadata(){
+        return Map.of("driveId",driveId,
+                "parentId",parentId,
+                "fileKey",fileKey,
+                "size", String.valueOf(metaData.getSize()),
+                "mimeType",metaData.getMimeType(),
+                "name",metaData.getName());
+    }
 }
 

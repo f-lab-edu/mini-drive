@@ -15,5 +15,7 @@ class AwsS3ConventionPlugin implements Plugin<Project>{
         def deps = project.dependencies
         deps.add('implementation', deps.platform("software.amazon.awssdk:bom:${awsSdkVersion}"))
         deps.add('implementation', "software.amazon.awssdk:s3")
+        deps.add('implementation', "software.amazon.awssdk:secretsmanager")
+
     }
 }

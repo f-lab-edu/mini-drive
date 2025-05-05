@@ -2,6 +2,7 @@ package dev.chan.api.infrastructure.aws;
 
 import dev.chan.api.config.AwsProperties;
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.PresignedUrlResponse;
 import dev.chan.api.domain.file.PresignedUrlSpecification;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
+import java.time.Duration;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,45 +34,34 @@ class S3PresignedUrlGeneratorTest {
     }
 
     @Test
-    @DisplayName("")
-    void shouldGenerateUrl_whenDriveId() {
-        // given
-        awsProperties.getBucketName();
-
-        // when
-        log.info("bucketName {}", awsProperties.getBucketName());
-        // then
-        assertThat(awsProperties).isNotNull();
-        assertThat(awsProperties.getBucketName()).isNotNull();
-
-    }
-
-    @Test
     @DisplayName("driveId와 metaData로 URL을 생성한다.")
     void shouldGenerateUrl_whenDriveIdWithMetadata() {
         // given
         String fileKey = "test/test.pdf";
 
         FileMetaData metaData = FileMetaData.builder()
-                .originalFileName("test")
-                .relativePath("")
+                .name("test.pdf")
                 .size(10)
-                .parentId("root")
                 .mimeType("application/pdf")
-                .originalFileName("test.pdf")
                 .build();
 
         // when
-        String generatedUrl = generator.createPresignedUrl(
+        PresignedUrlResponse generatedUrl = generator.createPresignedUrl(
                 new PresignedUrlSpecification(
                         awsProperties.getBucketName(),
+                        "d1234",
+                        "root",
                         fileKey,
-                        metaData)
+                        metaData
+                )
         );
 
         // then
-        assertThat(generatedUrl).isNotNull()
-                .contains(fileKey)
-                .contains(LocalDate.now().toString());
+        assertThat(generatedUrl).isNotNull();
+
+        Instant now = Instant.now();
+        assertThat(generatedUrl.expiredAt())
+                .isAfter(now.plusSeconds(50))
+                .isBefore(now.plus(Duration.ofMinutes(10)));
     }
 }

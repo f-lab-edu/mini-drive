@@ -7,7 +7,6 @@ class SpringBootConventionPlugin implements Plugin<Project> {
         project.plugins.apply('org.springframework.boot')
         project.plugins.apply('java')
         project.plugins.apply('io.spring.dependency-management')
-
         project.repositories {
             mavenCentral()
         }
@@ -16,7 +15,7 @@ class SpringBootConventionPlugin implements Plugin<Project> {
             add("implementation", "org.springframework.boot:spring-boot-starter")
             add("implementation", "org.springframework.boot:spring-boot-starter-web")
             add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
-
+            add("implementation","org.springframework.boot:spring-boot-starter-validation")
             add("compileOnly", "org.projectlombok:lombok")
             add("annotationProcessor", "org.projectlombok:lombok")
             add("testCompileOnly", "org.projectlombok:lombok")
