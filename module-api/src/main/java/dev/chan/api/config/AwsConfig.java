@@ -36,7 +36,6 @@ public class AwsConfig implements DisposableBean {
     public S3Presigner devS3Presigner() {
         AwsBasicCredentials credentials = loadCredentialsFromSecretManager();
         this.presigner = S3Presigner.builder().region(Region.of(awsProperties.getRegion())).credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
-
         return presigner;
     }
 

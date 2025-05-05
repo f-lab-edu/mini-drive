@@ -6,10 +6,6 @@ class AwsS3ConventionPlugin implements Plugin<Project>{
     void apply(Project project) {
         project.pluginManager.apply("java")
 
-        project.repositories {
-            mavenCentral()
-        }
-
         def awsSdkVersion = '2.27.3'
 
         def deps = project.dependencies
