@@ -2,17 +2,34 @@
 version: "3.8"
 
 services:
+
   localstack:
-    image: "localstack/localstack"
+    image: "localstack/localstack:3"
     container_name: localstack
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3
+      - SERVICES=s3, sqs, lambda
       - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker/sock
+      - DEFAULT_REGION=ap-northeast-2
     volumes:
-      - "./.localstack:/tmp/localstack" # 로컬에 데이터 유지
+      - "./localstack-init:/etc/localstack/init/ready.d"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./init-aws.sh:/etc/localstack/init/read/d/init-aws.sh" # 도커 실행시 init-aws.sh를 읽어 자동 실행 !
+      - "./lambda/lambda.zip:/tmp/lambda.zip"
+    networks:
+      - localnet
+
+  spring-server:
+    build:
+      context: .
+      dockerfile: spring-server/Dockerfile
+    container_name: spring-server
+    ports:
+      - "8080:8080"
+    networks:
+      - localnet
+    depends_on:
+      - localstack
+
+networks:
+  localnet:
