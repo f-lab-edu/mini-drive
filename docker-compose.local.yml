@@ -15,7 +15,7 @@ services:
     volumes:
       - "./localstack-init:/etc/localstack/init/ready.d"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./lambda/lambda.zip:/tmp/lambda.zip"
+      - "./lambda:/etc/localstack/lambda"
     networks:
       - localnet
 

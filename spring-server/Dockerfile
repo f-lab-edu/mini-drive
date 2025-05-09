@@ -1,4 +1,4 @@
-# ✨ Build Stage
+# Build Stage
 FROM gradle:8.5-jdk21 AS builder
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY . .
 # 빌드 (루트의 settings.gradle 기준으로 멀티모듈 전체 빌드)
 RUN gradle :module-api:bootJar -x test --no-daemon
 
-# ✨ Run Stage
+# Run Stage
 FROM openjdk:21-slim
 WORKDIR /app
 COPY --from=builder /app/module-api/build/libs/*.jar app.jar

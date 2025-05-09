@@ -26,6 +26,5 @@ class SpringBootConventionPlugin implements Plugin<Project> {
         project.tasks.withType(Test).configureEach {
             useJUnitPlatform()
         }
-
     }
 }

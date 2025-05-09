@@ -1,44 +1,59 @@
 import https from 'https';
 import { URL } from 'url';
-import { S3Client, HeadObjectCommand} from '@aws-sdk/client-s3';
+import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 
 export const handler = async (event) => {
-    console.log('SQS Event:', JSON.stringify(event, null, 2));
+    console.log('🟡 SQS Event 전체:', JSON.stringify(event, null, 2));
     const batchItemFailures = [];
 
-    for(const record of event.Records){
+    for (const record of event.Records) {
         try {
+            console.log("🔄 처리 중인 SQS 메시지:", record);
 
-            // 이벤트 발생시 S3가 자동으로 제공해주는 S3 이벤트 정보
             const body = JSON.parse(record.body);
-            const bucket = body.Records?.[0]?.s3?.bucket?.name;
-            const key = body.Records?.[0]?.s3?.object?.key;
-            const size = body.Records?.[0]?.s3?.object?.size;
+            console.log("🧾 파싱된 메시지 body:", body);
 
-            if(!bucket || !key) throw new Error("❗ 잘못된 S3 이벤트입니다. ");
+            if (body?.Event === 's3:TestEvent') {
+                console.log("📦 Ignoring s3:TestEvent from LocalStack");
+                continue;
+            }
+
+            const s3Record = body.Records?.[0];
+            if (!s3Record) throw new Error("❌ Records[0] 누락됨");
+
+            const bucket = s3Record?.s3?.bucket?.name;
+            const key = s3Record?.s3?.object?.key;
+            const size = s3Record?.s3?.object?.size;
+
+            console.log("📂 버킷:", bucket, "🗂️ 키:", key, "📏 사이즈:", size);
+
+            if (!bucket || !key) throw new Error("❗ 잘못된 S3 이벤트입니다.");
+
             const userMetadata = await getUserMetaData(bucket, key);
-            const callbackBody = createBody(userMetadata, bucket, key, size);
+            console.log("📝 사용자 메타데이터:", userMetadata);
 
-            await postToServer ("https://localhost:8080/api/upload-callback", callbackBody);
+            const callbackBody = createBody(userMetadata, bucket, key, size);
+            console.log("📬 콜백 요청 바디:", callbackBody);
+
+            await postToServer("http://host.docker.internal:8080/api/upload-callback", callbackBody);
+            console.log("✅ 콜백 요청 성공");
 
         } catch (error) {
-            console.log("❌ Failed to process record:", error);
+            console.error("❌ 레코드 처리 실패:", error);
             batchItemFailures.push({ itemIdentifier: record.messageId });
-            continue; // 다음 메시지로 넘어감
-
+            continue;
         }
     }
-    // 성공시 [] 배열리턴 - 성공으로 간주
-    return { batchItemFailures };
 
+    return { batchItemFailures };
 };
 
-function postToServer(endpoint, body){
+function postToServer(endpoint, body) {
     const url = new URL(endpoint);
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
         const req = https.request({
             hostname: url.hostname,
-            port: 443,
+            port: url.port || 443,
             path: url.pathname,
             method: 'POST',
             headers: {
@@ -56,28 +71,27 @@ function postToServer(endpoint, body){
         req.end();
     });
 }
-/**
- * 사용자 정의 메타데이터를 가져오는 함수
- */
-const getUserMetaData = async(bucket,key)=> {
+
+const getUserMetaData = async (bucket, key) => {
     try {
-        const s3 = new S3Client({ region: "ap-northeast-2"});
+        const s3 = new S3Client({ region: "ap-northeast-2" });
         const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
         const response = await s3.send(command);
-        console.log("📝 Metadata:", response.Metadata);
         return response.Metadata;
     } catch (err) {
         console.error("❌ Failed to fetch metadata:", err);
+        return {};
     }
-}
-function createBody(userMetadata,bucket,key,size){
+};
+
+function createBody(userMetadata, bucket, key, size) {
     return {
-        "bucket": bucket,
-        "driveId": userMetadata["driveid"],
-        "mimeType": userMetadata["mimetype"],
-        "fileKey": key,
-        "parentId": userMetadata["parentid"],
-        "fileName" : userMetadata["filename"],
-        "size": size
-    }
+        bucket,
+        driveId: userMetadata["driveid"],
+        mimeType: userMetadata["mimetype"],
+        fileKey: key,
+        parentId: userMetadata["parentid"],
+        fileName: userMetadata["filename"],
+        size
+    };
 }
