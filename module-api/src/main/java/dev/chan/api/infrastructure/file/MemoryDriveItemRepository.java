@@ -2,6 +2,7 @@ package dev.chan.api.infrastructure.file;
 
 import dev.chan.api.domain.file.DriveItem;
 import dev.chan.api.domain.file.DriveItemRepository;
+import dev.chan.api.domain.file.MimeType;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class MemoryDriveItemRepository implements DriveItemRepository {
 
     @Override
     public DriveItem findRootFolder() {
-        return new DriveItem("d1234",null, "root", "root", "application/vnd.mini-drive.folder", "");
+        return new DriveItem("d1234",null, "root", MimeType.FOLDER, "" , 1234L);
 
     }
 

@@ -1,53 +1,85 @@
 package dev.chan.api.application.file;
 
-import dev.chan.api.application.file.command.PresignedUrlCommand;
+import dev.chan.api.config.LocalstackS3Config;
+import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.MimeType;
 import dev.chan.api.domain.file.PresignedUrlResponse;
+import dev.chan.api.domain.file.PresignedUrlSpecification;
 import dev.chan.api.infrastructure.aws.S3PresignedUrlGenerator;
-import dev.chan.api.web.file.request.FileMetaDataDto;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.localstack.LocalStackContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 
-import static dev.chan.api.application.file.PresignedUrlServiceTest.metaDataDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
+@SpringBootTest
+@Testcontainers
+@Import(LocalstackS3Config.class)
+@ActiveProfiles("test")
 
-@SpringBootTest(properties = "aws.profile=dev")
-class PresignedUrlServiceIntegrationTest {
+public class PresignedUrlServiceIntegrationTest {
 
-    @Autowired
-    private S3PresignedUrlGenerator urlGenerator;
+    @Autowired private S3Client s3Client;
+    @Autowired private S3PresignedUrlGenerator presignedUrlGenerator;
 
-    @Autowired
-    private PresignedUrlService presignedUrlService;
-
-    @Test
-    @DisplayName("PresignedUrlService가 파일 메타데이터와 멀티파트 파일로 presigned URL들을 생성한다")
-    void shouldGenerattePresignedUrl() {
-        // given
-        String driveId = "d1234";
-        PresignedUrlCommand presignedUrlCommand = createPresignedUrlCommand();
-
-        // when
-        List<PresignedUrlResponse> responses = presignedUrlService.generateUploadUrls(presignedUrlCommand);
-
-        // then
-        assertThat(responses).isNotNull().hasSize(1);
-
-        PresignedUrlResponse first = responses.getFirst();
-        assertThat(first.url()).contains(LocalDate.now().toString()).contains(driveId);
+    @PostConstruct
+    public void initS3Bucket() {
+        s3Client.createBucket(CreateBucketRequest.builder().bucket("test-bucket").build());
     }
 
-    public PresignedUrlCommand createPresignedUrlCommand() {
-        FileMetaDataDto metaDataDto = metaDataDto();
-        return PresignedUrlCommand.builder().driveId("d1234").parentId("").fileMetaDataDtoList(List.of(metaDataDto)).build();
+    @Test
+    @DisplayName("presignedURL을 생성하고, 파일을 업로드한다.")
+    void shouldGeneratePresignedUrl_AndUploadFile() throws IOException {
+        //given
+        PresignedUrlSpecification spec = testSpec();
+        String content = "hello localstack!";
+
+        //when
+        PresignedUrlResponse response = presignedUrlGenerator.createPresignedUrl(spec);
+
+        HttpURLConnection connection = (HttpURLConnection) URI.create(response.url()).toURL().openConnection();
+
+        connection.setDoOutput(true);
+        connection.setRequestMethod("PUT");
+        connection.getOutputStream().write(content.getBytes());
+
+        int responseCode = connection.getResponseCode();
+
+        //then
+        assertThat(responseCode).isEqualTo(200);
+    }
+
+    @Test
+    @DisplayName("로컬스택에서 S3 버킷이 정상 생성된다.")
+    void shouldCreateS3Bucket(){
+        ListBucketsResponse buckets = s3Client.listBuckets();
+        log.info("bucket = {} ", buckets.buckets() );
+        assertThat(buckets.buckets()).isNotEmpty();
+    }
+
+
+    private static PresignedUrlSpecification testSpec() {
+        String bucketName = "test-bucket";
+        String driveId = "d1234";
+        String parentId = "p1234";
+        String key = "test.txt";
+        FileMetaData meta = FileMetaData.builder().size(10L).name("f1234").mimeType(MimeType.fromMime("text/plain")).build();
+        return new PresignedUrlSpecification(bucketName, driveId, parentId, key, meta);
     }
 }

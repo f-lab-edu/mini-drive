@@ -7,9 +7,8 @@ class SpringBootConventionPlugin implements Plugin<Project> {
         project.plugins.apply('org.springframework.boot')
         project.plugins.apply('java')
         project.plugins.apply('io.spring.dependency-management')
-        project.repositories {
-            mavenCentral()
-        }
+
+        def testContainersVersion = "1.19.3"
 
         project.dependencies.with {
             add("implementation", "org.springframework.boot:spring-boot-starter")
@@ -20,11 +19,12 @@ class SpringBootConventionPlugin implements Plugin<Project> {
             add("annotationProcessor", "org.projectlombok:lombok")
             add("testCompileOnly", "org.projectlombok:lombok")
             add("testAnnotationProcessor", "org.projectlombok:lombok")
+            add("testImplementation", "org.testcontainers:localstack:$testContainersVersion")
+            add("testImplementation", "org.testcontainers:junit-jupiter:$testContainersVersion")
         }
 
         project.tasks.withType(Test).configureEach {
             useJUnitPlatform()
         }
-
     }
 }
