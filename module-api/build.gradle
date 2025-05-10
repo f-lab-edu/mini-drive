@@ -1,5 +1,6 @@
 
 plugins {
+    id 'convention.bom'
     id 'convention.aws-s3'
     id 'convention.spring-boot'
     id 'convention.java-toolchain'
