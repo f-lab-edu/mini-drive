@@ -13,16 +13,16 @@ services:
       - DEBUG=1
       - DEFAULT_REGION=ap-northeast-2
     volumes:
-      - "./localstack-init:/etc/localstack/init/ready.d"
+      - "./docker/localstack/init:/etc/localstack/init/ready.d"
+      - "./docker/localstack/lambda:/etc/localstack/lambda"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./lambda:/etc/localstack/lambda"
     networks:
       - localnet
 
   spring-server:
     build:
-      context: .
-      dockerfile: spring-server/Dockerfile
+      context: ../module-api
+      dockerfile: Dockerfile
     container_name: spring-server
     ports:
       - "8080:8080"

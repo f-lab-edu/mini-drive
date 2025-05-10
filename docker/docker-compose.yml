@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  spring-server:
+    build:
+      context: ../
+      dockerfile: module-api/Dockerfile
+    container_name: spring-server
+    ports:
+      - "8080:8080"
+
+  kafka:
+    build:
+      context: ../
+      dockerfile: module-kafka/Dockerfile
+    container_name: kafka-cluster
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    restart: unless-stopped
+    networks:
+      - localnet
+
+networks:
+  localnet:
+
