@@ -15,7 +15,6 @@ class SpringBootConventionPlugin implements Plugin<Project> {
             add("implementation", "org.springframework.boot:spring-boot-starter")
             add("implementation", "org.springframework.boot:spring-boot-starter-web")
             add("implementation","org.springframework.boot:spring-boot-starter-validation")
-
             add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
 
             add("compileOnly", "org.projectlombok:lombok:$lombokVersion")
