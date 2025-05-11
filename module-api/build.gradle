@@ -6,6 +6,10 @@ plugins {
     id 'convention.kafka'
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation project(":module-kafka")
 }
