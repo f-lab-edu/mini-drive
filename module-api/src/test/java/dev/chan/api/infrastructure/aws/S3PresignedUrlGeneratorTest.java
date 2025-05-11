@@ -2,6 +2,7 @@ package dev.chan.api.infrastructure.aws;
 
 import dev.chan.api.config.AwsProperties;
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.MimeType;
 import dev.chan.api.domain.file.PresignedUrlResponse;
 import dev.chan.api.domain.file.PresignedUrlSpecification;
 import jakarta.annotation.PostConstruct;
@@ -14,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -42,7 +43,7 @@ class S3PresignedUrlGeneratorTest {
         FileMetaData metaData = FileMetaData.builder()
                 .name("test.pdf")
                 .size(10)
-                .mimeType("application/pdf")
+                .mimeType(MimeType.fromMime("application/pdf"))
                 .build();
 
         // when

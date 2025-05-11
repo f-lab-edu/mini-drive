@@ -1,0 +1,16 @@
+spring:
+  profiles: local
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: test  # local stack에서는 아무 값이나 사용 가능
+        secret-key: test
+      s3:
+        endpoint: http://localhost:4566
+        path-style-access-enabled: true
+
+aws:
+  s3:
+    bucket: mini-drive-dev-upload

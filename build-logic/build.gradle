@@ -36,11 +36,3 @@ dependencies {
     implementation localGroovy()
     implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5'
 }
-
-// Java 버전 설정
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-

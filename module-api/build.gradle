@@ -4,7 +4,3 @@ plugins {
     id 'convention.spring-boot'
     id 'convention.java-toolchain'
 }
-
-repositories {
-    mavenCentral() // 반드시 명시!
-}

@@ -41,7 +41,8 @@ public class S3PresignedUrlGenerator {
         if (!presignedRequest.isBrowserExecutable()) {
             log.warn("생성된 Presigned URL이 브라우저에서 실행되지 않을 수 있습니다. spec={}", spec);
         }
-        return buildResponse(spec, presignedRequest.url(), expiredAt);
+
+        return PresignedUrlResponse.from(spec,  presignedRequest.url().toExternalForm(), expiredAt);
     }
 
     private PresignedPutObjectRequest generatePresignedPutObjectRequest(PutObjectRequest putObjectRequest, S3Presigner presigner, Duration expiredAfter) {
@@ -75,17 +76,5 @@ public class S3PresignedUrlGenerator {
                 .key(spec.fileKey())
                 .metadata(spec.toS3Metadata())
                 .build();
-    }
-
-    /**
-     * Presigned URL 요청 사양과 URL, 만료 시각을 기반으로 응답 객체를 생성합니다.
-     *
-     * @param spec 요청에 사용된 사양 정보
-     * @param url 생성된 Presigned URL
-     * @param expiredAt Presigned URL의 만료 시각
-     * @return PresignedUrlResponse 클라이언트에 전달할 응답 객체
-     */
-    private PresignedUrlResponse buildResponse(PresignedUrlSpecification spec, URL url, Instant expiredAt) {
-        return PresignedUrlResponse.from(spec, url.toExternalForm(), expiredAt);
     }
 }

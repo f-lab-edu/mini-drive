@@ -1,5 +1,5 @@
 aws:
-  profile: dev
+  profile: local
   region: ap-northeast-2
   secret:
     name: dev/aws/credentials

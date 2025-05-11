@@ -1,6 +1,7 @@
 package dev.chan.api.web.file.request;
 
 import dev.chan.api.domain.file.FileMetaData;
+import dev.chan.api.domain.file.MimeType;
 import lombok.*;
 
 @Getter
@@ -18,7 +19,7 @@ public class FileMetaDataDto {
         return FileMetaData.builder()
                 .name(this.name)
                 .size(this.size)
-                .mimeType(this.mimeType)
+                .mimeType(MimeType.fromMime(this.mimeType))
                 .build();
     }
 }

@@ -19,7 +19,7 @@ public class DriveItem {
 
     private String id;
     private String name;
-    private String mimeType;
+    private MimeType mimeType;
     private String driveId;
     private String fileKey;
     private Long size;
@@ -29,13 +29,8 @@ public class DriveItem {
     @Builder.Default
     private ArrayList<DriveItem> children = new ArrayList<>();
 
-    public DriveItem(String id, String name, String mimeType) {
-        this.id = id;
-        this.name = name;
-        this.mimeType = mimeType;
-    }
+    public DriveItem(String driveId, String id, String name, MimeType mimeType, String fileKey, Long size) {
 
-    public DriveItem(String d1234, Object o, String root, String root1, String s, String s1) {
 
     }
 
@@ -43,15 +38,15 @@ public class DriveItem {
         if (this.getParent() == null) {
             return ROOT_ID;
         }
-
         return this.getParent().getId();
     }
 
-
+    /**
+     * DriveItem 타입이 폴더인지 확인
+     * @return
+     */
     public boolean isFolder() {
-        // TODO: 구현 준비중입니다.
-        return true;
-
+        return this.mimeType == MimeType.FOLDER;
     }
 
     /**
