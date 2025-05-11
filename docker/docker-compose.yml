@@ -10,13 +10,14 @@ services:
       - "8080:8080"
 
   kafka:
-    build:
-      context: ../
-      dockerfile: module-kafka/Dockerfile
     container_name: kafka-cluster
     ports:
       - "9092:9092"
       - "9093:9093"
+    volumes:
+      - ./docker/kafka/server.properties:/opt/kafka/config/kafka/server.properties
+    environment:
+      KAFKA_SERVER_CONFIG_FILE: /opt/kafka/config/kafka/server.properties
     restart: unless-stopped
     networks:
       - localnet
