@@ -32,12 +32,6 @@ gradlePlugin {
             id = "convention.kafka"
             implementationClass = "KafkaConventionPlugin"
         }
-
-        bomConvention {
-            id = "convention.bom"
-            implementationClass = "BomConventionPlugin"
-        }
-
     }
 }
 

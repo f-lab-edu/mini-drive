@@ -1,8 +1,11 @@
 
 plugins {
-    id 'convention.bom'
     id 'convention.aws-s3'
     id 'convention.spring-boot'
     id 'convention.java-toolchain'
     id 'convention.kafka'
+}
+
+dependencies {
+    implementation project(":module-kafka")
 }

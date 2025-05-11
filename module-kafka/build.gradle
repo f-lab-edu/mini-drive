@@ -1,6 +1,13 @@
 plugins {
-    id 'convention.bom'
     id 'convention.spring-boot'
     id 'convention.java-toolchain'
     id 'convention.kafka'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }
