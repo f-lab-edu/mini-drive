@@ -27,6 +27,11 @@ gradlePlugin {
             id = "convention.java-toolchain"
             implementationClass = "JavaToolchainConventionPlugin"
         }
+
+        kafkaConvention {
+            id = "convention.kafka"
+            implementationClass = "KafkaConventionPlugin"
+        }
     }
 }
 
