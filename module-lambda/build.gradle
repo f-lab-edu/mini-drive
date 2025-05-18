@@ -1,0 +1,61 @@
+plugins {
+    id 'base'
+}
+
+def lambdaSrcDir = file("module-lambda")
+def zipOutputDir = layout.buildDirectory.dir("lambda-zip")
+
+
+tasks.register("npmInstall", Exec) {
+    group = "lambda"
+    description = "Lambda 의존성 설치"
+
+    workingDir = lambdaSrcDir
+    // 명령어를 셸에 넘겨서 실행 → 모든 경로 문제 해결
+
+    commandLine "/usr/local/bin/npm", "install", "--omit=dev"
+
+    environment "PATH", "/usr/local/bin:/opt/homebrew/bin:" + System.getenv("PATH")
+
+    doFirst {
+        println ">>> Exec Task 실행 직전 PATH: ${environment["PATH"]}"
+    }
+}
+/*
+tasks.register("bundleLambda", Exec) {
+    group = "lambda"
+    description = "esbuild로 Lambda 번들링"
+
+    workingDir = file("module-lambda")
+
+}*/
+tasks.register("zipLambda", Zip) {
+    dependsOn("npmInstall")
+    group = "lambda"
+    description = "lambda 코드를 zip 으로 패키징"
+
+    // 포함할 파일 결정
+    from(lambdaSrcDir) {
+        include "index.mjs"
+        include "node_modules/**"
+    }
+
+    destinationDirectory.set(zipOutputDir)
+    archiveFileName.set("index.zip")
+}
+
+tasks.register("prepareLambdaForLocalStack", Exec) {
+    dependsOn("zipLambda");
+}
+
+tasks.register("deployLambdaLocal", Exec) {
+    group = "lambda"
+    description = "Localstack에 Lambda 배포"
+
+    dependsOn("zipLambda")
+
+    commandline "aws", "lambda", "update-function-code",
+            "--function-name", "uploadCallbackFunction",
+            "--zip-file", "fileb://${lambdaZipPath}",
+            "--endpoint-url", "http://localhost:4566"
+}
