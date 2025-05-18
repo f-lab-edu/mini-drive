@@ -13,8 +13,7 @@ tasks.register("npmInstall", Exec) {
     workingDir = lambdaSrcDir
     // 명령어를 셸에 넘겨서 실행 → 모든 경로 문제 해결
 
-    commandLine "/usr/local/bin/npm", "install", "--omit=dev"
-
+    commandLine "npm", "install", "--omit=dev"
     environment "PATH", "/usr/local/bin:/opt/homebrew/bin:" + System.getenv("PATH")
 
     doFirst {
