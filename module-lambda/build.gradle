@@ -10,7 +10,6 @@ tasks.register("npmInstall", Exec) {
     group = "lambda"
     description = "Lambda 의존성 설치"
 
-    workingDir = lambdaSrcDir
     // 명령어를 셸에 넘겨서 실행 → 모든 경로 문제 해결
 
     commandLine "npm", "install", "--omit=dev"
