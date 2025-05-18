@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
-echo "🔄 Lambda 패키징 중..."
 
-cd /tmp
-rm -f lambda.zip
-zip -j /tmp/lambda.zip /etc/localstack/lambda/* > /dev/null
 
 # S3 버킷 생성
 awslocal s3 mb s3://mini-drive-dev-upload
