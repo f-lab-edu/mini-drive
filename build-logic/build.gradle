@@ -2,6 +2,7 @@
 plugins {
     id 'groovy'
     id 'java-gradle-plugin'
+    id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 // 프로젝트에서 사용할 의존성 원격저장소 정의
@@ -32,6 +33,16 @@ gradlePlugin {
             id = "convention.kafka"
             implementationClass = "KafkaConventionPlugin"
         }
+
+        localstackConvention{
+            id = "convention.localstack"
+            implementationClass = "LocalstackConventionPlugin"
+        }
+
+        lambdaConvention{
+            id = "convention.lambda"
+            implementationClass = "LambdaConventionPlugin"
+        }
     }
 }
 
@@ -40,4 +51,6 @@ dependencies {
     implementation gradleApi()
     implementation localGroovy()
     implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5'
+    implementation 'com.github.node-gradle:gradle-node-plugin:7.0.1'
+
 }

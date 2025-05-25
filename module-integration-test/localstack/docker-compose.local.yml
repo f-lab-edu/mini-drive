@@ -1,6 +1,4 @@
 # AWS 테스트를 위한 localstack 테스트환경 구축 컨테이너
-version: "3.8"
-
 services:
 
   localstack:
@@ -10,19 +8,21 @@ services:
       - "4566:4566"
     environment:
       - SERVICES=s3, sqs, lambda
-      - DEBUG=1
-      - DEFAULT_REGION=ap-northeast-2
+      - REGION=ap-northeast-2
+      - LAMBDA_EXECUTOR=local
+      - PORT_WEB_UI=8080
+      - KINESIS_ERROR_PROBABILITY=0.25
     volumes:
-      - "./localstack-init:/etc/localstack/init/ready.d"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./lambda:/etc/localstack/lambda"
+      #- "${INIT_DIR}:/etc/localstack/init/ready.d"
+      - "${LAMBDA_DIR}:/etc/localstack/lambda"
+      # - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - localnet
 
   spring-server:
     build:
-      context: .
-      dockerfile: spring-server/Dockerfile
+      context: "${ROOT_DIR}"
+      dockerfile: "${ROOT_DIR}/module-api/Dockerfile"
     container_name: spring-server
     ports:
       - "8080:8080"

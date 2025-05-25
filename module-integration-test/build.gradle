@@ -1,0 +1,22 @@
+plugins {
+    id 'convention.localstack'
+    id 'convention.lambda'
+}
+
+afterEvaluate {
+    tasks.named('localstackUp'){
+        doLast {
+            println "[start] Localstack started from module-integration-test"
+        }
+    }
+
+    tasks.named('localstackDown'){
+        doLast {
+            println "[end] Localstack down from module-integration-test"
+        }
+    }
+}
+
+
+
+
