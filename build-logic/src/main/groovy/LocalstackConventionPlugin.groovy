@@ -8,6 +8,11 @@ class LocalstackConventionPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply('base')
 
+        def bucketName = "testbucket"
+        def endPointUrl = "http://localhost:4566"
+        def region = "ap-northeast-2"
+        def queueName = "upload-callback-queue"
+
         project.afterEvaluate {
 
             def testModule = project.findProject(":module-integration-test")
@@ -19,7 +24,6 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                 description = "Localstack 컨테이너를 백그라운드로 실행"
 
                 if (testModule) {
-
                     workingDir = localstackDir
                     commandLine "sh", "run.sh"
 
@@ -27,7 +31,6 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                     errorOutput = System.err
 
                     ignoreExitValue = false
-
                 } else {
                     doFirst {
                         project.logger.warn(":module-localstack 프로젝트를 찾을 수 없습니다.")
@@ -56,10 +59,6 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                 }
             }
 
-            def bucketName="testbucket"
-            def endPointUrl="http://localhost:4566"
-            def region = "ap-northeast-2"
-
             project.tasks.register("createBucket", Exec){
                 group = "localstack"
                 description = "s3 테스트 버킷 생성"
@@ -80,51 +79,61 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                 group = "Localstack"
                 description = "sqs upload callback queue 생성"
 
-                def queueName = "uploadCallbackQueue"
-
                 workingDir = localstackDir.dir("scripts")
 
+                environment "BUCKET_NAME", bucketName
                 environment "QUEUE_NAME",queueName
 
                 commandLine "sh", "create-upload-callback-queue.sh"
 
                 standardOutput = System.out
                 errorOutput = System.err
-
             }
 
-            project.tasks.register('configS3Notification', Exec) {
-                group = "Localstack"
-                description = "S3 -> SQS 이벤트 알림 연결"
+            def fileName = "trigger.txt"
+            def uploadPrefix = "uploads"
 
-                workingDir.set(localstackDir.dir("init"))
-
-                commandLine "sh", "02-create-sqs"
-
-                /*
-                dependsOn("createSqsUploadCallbackQueue", "setupS3bucket")
-                commandLine "awslocal", "s3api", "put-bucket-notification-configuration",
-                        "--bucket", "my-bucket",
-                        "--notification-configuration", """
-                            {
-                                "QueueConfigurations":[
-                                    {
-                                        "QueueArn": "arn:aws:sqs:ap-northeast-2:000000000000:my-queue",
-                                        "Events": ["s3:ObjectCreated:*"]
-                                    }
-                                ]
-                            }
-                            """*/
-            }
-
-            project.tasks.register("uploadTestFile", Exec) {
+            project.tasks.register("uploadDummyFile", Exec) {
                 group = "localstack"
-                description = "objectCreated 이벤트 유도용 테스트 파일 업로드"
+                description = "objectCreated 이벤트 유도용 더미 파일 업로드"
 
-                dependsOn("configS3Notification")
-                commandLine "awsLocal", "s3", "cp", "hello.txt", "s3://mini-drive/uploads/hello.txt"
+                environment "BUCKET_NAME", bucketName
+                environment "ENDPOINT_URL", endPointUrl
+                environment "FILE_NAME", fileName
+                environment "UPLOAD_PREFIX", uploadPrefix
+
+                workingDir = localstackDir.dir("scripts")
+
+                // commandLine "sh", "upload-dummy-file.sh"
+                commandLine "sh", "-c", '''
+                          echo "trigger" > $FILE_NAME && \
+                          awslocal s3 cp $FILE_NAME s3://$BUCKET_NAME/$UPLOAD_PREFIX/$FILE_NAME \
+                          --endpoint-url=$ENDPOINT_URL
+                        '''
+
+                standardOutput = System.out
+                errorOutput = System.err
             }
 
+            project.tasks.register("checkSqsMessage", Exec) {
+                group = "localstack"
+                description = "SQS 메시지 수신 확인"
+
+                environment "BUCKET_NAME", bucketName
+                environment "ENDPOINT_URL", endPointUrl
+                environment "QUEUE_NAME", queueName
+                environment "REGION", region
+
+                commandLine "sh", "-c", '''
+                        awslocal sqs receive-message \
+                        --queue-url=$ENDPOINT_URL/000000000000/$QUEUE_NAME \
+                        --region=$REGION \
+                        --endpoint-url=$ENDPOINT_URL \
+                '''
+
+                standardOutput = System.out
+                errorOutput = System.err
+            }
 
         }
     }

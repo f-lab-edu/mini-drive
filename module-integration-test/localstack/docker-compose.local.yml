@@ -9,13 +9,13 @@ services:
     environment:
       - SERVICES=s3, sqs, lambda
       - REGION=ap-northeast-2
-      - LAMBDA_EXECUTOR=local
+      - LAMBDA_EXECUTOR=docker
       - PORT_WEB_UI=8080
       - KINESIS_ERROR_PROBABILITY=0.25
     volumes:
       #- "${INIT_DIR}:/etc/localstack/init/ready.d"
-      - "${LAMBDA_DIR}:/etc/localstack/lambda"
-      # - "/var/run/docker.sock:/var/run/docker.sock"
+      #- "${LAMBDA_DIR}:/etc/localstack/lambda"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - localnet
 

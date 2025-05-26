@@ -10,10 +10,31 @@ afterEvaluate {
         }
     }
 
+    tasks.named('testDeployLambda'){
+        doLast {
+            println "[deploy-lambda] started test lambda deploy "
+        }
+    }
+
     tasks.named('localstackDown'){
         doLast {
             println "[end] Localstack down from module-integration-test"
         }
+    }
+
+    tasks.register("integrationTest") {
+        group = "integration-test"
+        description = "전체 배포 자동화 실행"
+
+        dependsOn(
+                ":module-integration-test:localstackUp",
+                ":module-integration-test:createBucket",
+                ":module-integration-test:testDeployLambda",
+                ":module-integration-test:createSqsUploadCallbackQueue",
+                ":module-integration-test:uploadDummyFile",
+                ":module-integration-test:localstackUp",
+                ":module-integration-test:localstackDown",
+        )
     }
 }
 
