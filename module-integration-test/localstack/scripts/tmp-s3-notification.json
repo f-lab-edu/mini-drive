@@ -1,0 +1,8 @@
+{
+  "QueueConfigurations": [
+    {
+      "QueueArn": "arn:aws:sqs:ap-northeast-2:000000000000:upload-callback-queue",
+      "Events": ["s3:ObjectCreated:*"]
+    }
+  ]
+}

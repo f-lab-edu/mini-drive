@@ -27,56 +27,61 @@ class LambdaConventionPlugin implements Plugin<Project> {
         def region = "ap-northeast-2"
         def zipPath = deployDir + "/index.zip"
 
-        project.afterEvaluate {
-            project.tasks.named('npmInstall', NpmInstallTask) {
-                group = "Lambda"
-                description = "Lambda 의존성 설치"
-                workingDir.set(srcDir.file("package.json"))
-                args.set(["--omit=dev"])
+        project.tasks.named('npmInstall', NpmInstallTask) {
+            group = "Lambda"
+            description = "Lambda 의존성 설치"
+            workingDir.set(srcDir.file("package.json"))
+            args.set(["--omit=dev"])
+        }
+
+        project.tasks.register('zipLambda', Zip) {
+            dependsOn("npmInstall")
+            group = "Lambda"
+            description = "Lambda 코드를 zip으로 패키징"
+
+            println "zipDir    " + zipDir
+            from(srcDir) {
+                include "index.mjs"
+                include "node_modules/**"
             }
 
-            project.tasks.register('zipLambda', Zip) {
-                dependsOn("npmInstall")
-                group = "Lambda"
-                description = "Lambda 코드를 zip으로 패키징"
-
-                from(srcDir) {
-                    include "index.mjs"
-                    include "node_modules/**"
-                }
-
-                archiveFileName.set("index.zip")
-                destinationDirectory.set(zipDir)
+            doFirst {
+                println "📦 Lambda 압축 대상 경로: ${zipDir.get().asFile}"
             }
 
-            project.tasks.register('invokeLambda', Exec) {
-                group = "Lambda"
-                description = "Lambda 함수 호출"
+            archiveFileName.set("index.zip")
+            destinationDirectory.set(zipDir.get())
+        }
 
-                workingDir = scriptsDir.asFile
+        project.tasks.register('invokeLambda', Exec) {
+            group = "Lambda"
+            description = "Lambda 함수 호출"
 
-                environment "ENDPOINT_URL", endPointUrl
-                environment "ZIP_PATH", zipPath
-                environment "REGION", region
+            workingDir = scriptsDir.asFile
 
-                commandLine "sh", "invoke-lambda.sh"
-            }
+            println "endPointUrl     " + endPointUrl
 
-            project.tasks.register('testDeployLambda', Exec){
-                group ="Lambda"
-                description = "Lambda zip 배포"
+            environment "ENDPOINT_URL", endPointUrl
+            environment "ZIP_PATH", zipPath
+            environment "REGION", region
 
-                dependsOn("zipLambda")
+            commandLine "sh", "invoke-lambda.sh"
+        }
 
-                workingDir=scriptsDir.asFile
+        project.tasks.register('testDeployLambda', Exec) {
+            group = "Lambda"
+            description = "Lambda zip 배포"
 
-                environment "ENDPOINT_URL", endPointUrl
-                environment "ZIP_PATH", zipPath
-                environment "FUNCTION_NAME", functionName
-                environment "REGION", region
+            println "zipPath    " + zipPath
 
-                commandLine "sh", "lambda-deploy.sh"
-            }
+            workingDir = scriptsDir.asFile
+
+            environment "ENDPOINT_URL", endPointUrl
+            environment "ZIP_PATH", zipPath
+            environment "FUNCTION_NAME", functionName
+            environment "REGION", region
+
+            commandLine "sh", "lambda-deploy.sh"
         }
     }
 }

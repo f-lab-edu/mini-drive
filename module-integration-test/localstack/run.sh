@@ -7,6 +7,8 @@ INIT_DIR="$(cd "$(dirname "$0")" && pwd)/init"
 LAMBDA_DIR="$ROOT_DIR/build/lambda-zip"
 
 echo "INIT_DIR is: $INIT_DIR"
+echo "ROOT_DIR is: $ROOT_DIR"
+
 
 export TMPDIR=/private$TMPDIR
 export INIT_DIR

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "✅ 전달된 ZIP_PATH: [$ZIP_PATH]"
+ls -lh "$ZIP_PATH" || echo "❌ 존재하지 않음"
+
 if awslocal lambda get-function \
   --function-name "$FUNCTION_NAME" \
   --endpoint-url="$ENDPOINT_URL" &> /dev/null; then
