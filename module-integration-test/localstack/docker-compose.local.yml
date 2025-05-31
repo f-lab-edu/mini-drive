@@ -1,6 +1,35 @@
 # AWS 테스트를 위한 localstack 테스트환경 구축 컨테이너
 services:
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: kafka-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - localnet
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"       # 호스트에서 접근할 포트
+      - "29092:29092"     # 내부 도커 네트워크에서 접근할 포트 (Lambda 등)
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_INTERNAL://kafka-broker:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - localnet
+
   localstack:
     image: "localstack/localstack:3"
     container_name: localstack

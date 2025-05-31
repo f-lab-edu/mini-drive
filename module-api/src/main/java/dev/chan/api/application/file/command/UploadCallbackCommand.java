@@ -8,7 +8,8 @@ public record UploadCallbackCommand(
      String parentId,
      String fileKey,
      String fileName,
-     long size
+     long size,
+     String bucketName
 
 ) {
 

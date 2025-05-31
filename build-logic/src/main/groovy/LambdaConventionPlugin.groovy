@@ -41,7 +41,7 @@ class LambdaConventionPlugin implements Plugin<Project> {
 
             println "zipDir    " + zipDir
             from(srcDir) {
-                include "index.mjs"
+                include "index.js"
                 include "node_modules/**"
             }
 
