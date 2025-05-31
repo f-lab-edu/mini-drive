@@ -26,6 +26,8 @@ public class DriveItemController {
     @PostMapping("/upload/callback")
     public ResponseEntity<Void> handle(@RequestBody UploadCallbackRequest request){
         log.info("📩 S3 업로드 콜백 수신: {}", request);
+
+        // TODO : 업로드 콜백 응답 추가 예정입니다.
         return ResponseEntity.ok().build();
     }
 

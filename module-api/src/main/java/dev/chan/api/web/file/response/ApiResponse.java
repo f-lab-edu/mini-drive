@@ -13,6 +13,7 @@ public class ApiResponse {
     private HttpStatus status;
     private String message;
     private Object data;
+
     private LocalDateTime timestamp = LocalDateTime.now();
 
     private ApiResponse(String code, String message, Object data) {}

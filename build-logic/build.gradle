@@ -43,6 +43,11 @@ gradlePlugin {
             id = "convention.lambda"
             implementationClass = "LambdaConventionPlugin"
         }
+
+        testContainersConvention {
+            id = "convention.test-container"
+            implementationClass = "TestcontainersConventionPlugin"
+        }
     }
 }
 

@@ -4,6 +4,7 @@ plugins {
     id 'convention.spring-boot'
     id 'convention.java-toolchain'
     id 'convention.kafka'
+    id 'convention.test-container'
 }
 
 repositories {
