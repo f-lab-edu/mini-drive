@@ -1,0 +1,15 @@
+# IDE 설정 파일
+**/.idea/
+**/*.iml
+
+# 테스트/로컬 전용 모듈
+**/module-lambda/
+**/module-integration-test/
+
+# Git 저장소 정보
+**/.git/
+
+# OS/CI 관련 불필요 파일
+**/.DS_Store
+**/build/
+**/out/

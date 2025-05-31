@@ -9,5 +9,5 @@ plugins {
 }
 
 rootProject.name = 'mini-drive'
-include('module-api', 'module-kafka', 'module-lambda')
+include('module-api', 'module-kafka', 'module-lambda', 'module-integration-test')
 

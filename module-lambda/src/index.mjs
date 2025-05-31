@@ -35,7 +35,10 @@ export const handler = async (event) => {
             const callbackBody = createBody(userMetadata, bucket, key, size);
             console.log("📬 콜백 요청 바디:", callbackBody);
 
-            await postToServer("http://host.docker.internal:8080/api/upload-callback", callbackBody);
+            // 로컬 테스트
+            // await postToServer("http://host.docker.internal:8080/api/upload-callback", callbackBody);
+            await postToServer("http://localhost:8080/api/upload-callback", callbackBody);
+
             console.log("✅ 콜백 요청 성공");
 
         } catch (error) {
