@@ -5,7 +5,7 @@ const {Kafka} = require('kafkajs');
 
 // Kafka 클라이언트 생성
 const kafka = new Kafka({
-    clientId: 'dms-lambda', brokers: ['localhost:9092']
+    clientId: 'upload-callback-lambda', brokers: ['kafka-broker:29092']
 });
 
 // Kafka 프로듀서 생성
@@ -47,7 +47,7 @@ const handler = async (event) => {
             // await postToServer("http://localhost:8080/api/v1/files/upload/callback", callbackBody);
             // console.log("✅ 콜백 요청 성공");
 
-            await sendToKafka("dms.upload.completed", {
+            await sendToKafka("upload.completed.callback", {
                 bucket,
                 key,
                 size,
@@ -60,11 +60,11 @@ const handler = async (event) => {
 
         } catch (error) {
             console.error("❌ 레코드 처리 실패:", error);
-            batchItemFailures.push({ itemIdentifier: record.messageId });
+            batchItemFailures.push({itemIdentifier: record.messageId});
         }
     }
 
-    return { batchItemFailures };
+    return {batchItemFailures};
 };
 
 // kafka에 메시지 전송
@@ -110,8 +110,8 @@ function postToServer(endpoint, body) {
 // S3에서 사용자 메타데이터 조회
 async function getUserMetaData(bucket, key) {
     try {
-        const s3 = new S3Client({ region: "ap-northeast-2" });
-        const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
+        const s3 = new S3Client({region: "ap-northeast-2"});
+        const command = new HeadObjectCommand({Bucket: bucket, Key: key});
         const response = await s3.send(command);
         return response.Metadata || {};
     } catch (err) {

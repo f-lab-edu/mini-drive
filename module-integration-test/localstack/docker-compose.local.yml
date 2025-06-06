@@ -1,5 +1,16 @@
 # AWS 테스트를 위한 localstack 테스트환경 구축 컨테이너
+volumes:
+  kafka-data: { } # Kafka 데이터 저장용 볼륨 정의
+  zookeeper-data: { } # ZooKeeper 데이터 저장용 볼륨 정의
+
 services:
+  spring-server:
+    build:
+      context: ../
+      dockerfile: module-api/Dockerfile
+    container_name: spring-server
+    ports:
+      - "8080:8080"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -9,57 +20,65 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data # ZooKeeper 데이터 영속성을 위한 볼륨
     networks:
       - localnet
+    healthcheck: # ZooKeeper 헬스체크
+      test: [ "CMD", "sh", "-c", "echo ruok | nc localhost 2181 | grep imok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-broker
-    depends_on:
-      - zookeeper
     ports:
-      - "9092:9092"       # 호스트에서 접근할 포트
-      - "29092:29092"     # 내부 도커 네트워크에서 접근할 포트 (Lambda 등)
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_INTERNAL://kafka-broker:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - localnet
+      - "9092:9092"
+      - "29092:29092"
 
-  localstack:
-    image: "localstack/localstack:3"
-    container_name: localstack
-    ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=s3, sqs, lambda, logs
-      - REGION=ap-northeast-2
-      - LAMBDA_EXECUTOR=local
-      - PORT_WEB_UI=8080
-      - KINESIS_ERROR_PROBABILITY=0.25
     volumes:
-      #- "${INIT_DIR}:/etc/localstack/init/ready.d"
-      #- "${LAMBDA_DIR}:/etc/localstack/lambda"
-      - "${ROOT_DIR}/module-lambda/build/lambda-zip:/var/task/lambda-zip"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    networks:
-      - localnet
+      - kafka-data:/var/lib/kafka/data
+    environment:
+      KAFKA_BROKER_ID: 1 # 클러스터 내에서 고유한 브로커 ID
+      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181 # ZooKeeper 서비스의 호스트명과 포트 (서비스 이름:포트)
 
-  spring-server:
-    build:
-      context: "${ROOT_DIR}"
-      dockerfile: "${ROOT_DIR}/module-api/Dockerfile"
-    container_name: spring-server
-    ports:
-      - "8080:8080"
+      # 리스너 정의: 실제 브로커가 어떤 네트워크 인터페이스와 포트를 리스닝할지
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+
+      # 외부에 광고할 리스너 주소 (클라이언트가 접속할 주소)
+      # PLAINTEXT 는 로컬/외부 클라이언트용 (localhost:9092)
+      # PLAINTEXT_INTERNAL 은 도커 네트워크 내 다른 컨테이너용 (kafka-broker:29092)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_INTERNAL://kafka-broker:29092
+
+      # 리스너 보안 프로토콜 맵핑
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+
+      # 브로커 간 통신에 사용할 리스너 이름 (필수)
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # 최소 In-Sync Replica 수도 1로 설정
+
+      # 개발 환경에서 컨슈머 그룹 재조정을 빠르게 하기 위한 설정
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3
+
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false" # 토픽 자동 생성 비활성화 (프로덕션 권장)
+
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s # Kafka 시작까지의 대기 시간
+    restart: unless-stopped
     networks:
       - localnet
-    depends_on:
-      - localstack
 
 networks:
   localnet:
+    driver: bridge
