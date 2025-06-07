@@ -1,4 +1,6 @@
-version: '3.8'
+volumes:
+  kafka-data: { } # Kafka 데이터 저장용 볼륨 정의
+  zookeeper-data: { } # ZooKeeper 데이터 저장용 볼륨 정의
 
 services:
   spring-server:
@@ -9,19 +11,73 @@ services:
     ports:
       - "8080:8080"
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: kafka-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data # ZooKeeper 데이터 영속성을 위한 볼륨
+    networks:
+      - localnet
+    healthcheck: # ZooKeeper 헬스체크
+      test: [ "CMD", "sh", "-c", "echo ruok | nc localhost 2181 | grep imok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   kafka:
-    container_name: kafka-cluster
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-broker
     ports:
       - "9092:9092"
-      - "9093:9093"
+      - "29092:29092"
+
     volumes:
-      - ./docker/kafka/server.properties:/opt/kafka/config/kafka/server.properties
+      - kafka-data:/var/lib/kafka/data
     environment:
-      KAFKA_SERVER_CONFIG_FILE: /opt/kafka/config/kafka/server.properties
+      KAFKA_BROKER_ID: 1 # 클러스터 내에서 고유한 브로커 ID
+      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181 # ZooKeeper 서비스의 호스트명과 포트 (서비스 이름:포트)
+
+      # 리스너 정의: 실제 브로커가 어떤 네트워크 인터페이스와 포트를 리스닝할지
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+
+      # 외부에 광고할 리스너 주소 (클라이언트가 접속할 주소)
+      # PLAINTEXT 는 로컬/외부 클라이언트용 (localhost:9092)
+      # PLAINTEXT_INTERNAL 은 도커 네트워크 내 다른 컨테이너용 (kafka-broker:29092)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, PLAINTEXT_INTERNAL://kafka-broker:29092
+
+      # 리스너 보안 프로토콜 맵핑
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+
+      # 브로커 간 통신에 사용할 리스너 이름 (필수)
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # 최소 In-Sync Replica 수도 1로 설정
+
+      # 개발 환경에서 컨슈머 그룹 재조정을 빠르게 하기 위한 설정
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3
+
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false" # 토픽 자동 생성 비활성화 (프로덕션 권장)
+
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s # Kafka 시작까지의 대기 시간
     restart: unless-stopped
     networks:
       - localnet
 
 networks:
   localnet:
-
+    driver: bridge

@@ -5,4 +5,23 @@ aws:
   s3:
     bucket: mini-drive-dev-upload
     upload-prefix: uploads
-
+    
+logging:
+  level:
+    org:
+      apache:
+        kafka:
+          clients:
+            consumer:
+              ConsumerConfig: WARN
+              KafkaConsumer: WARN
+            producer:
+              ProducerConfig: WARN
+              KafkaProducer: WARN
+        common:
+          utils:
+            AppInfoParser: WARN
+          metrics:
+            Metrics: WARN
+      springframework:
+        kafka: WARN

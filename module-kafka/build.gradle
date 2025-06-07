@@ -1,5 +1,5 @@
 plugins {
-    id 'convention.spring-boot'
+    id 'convention.spring-boot-starter'
     id 'convention.java-toolchain'
     id 'convention.kafka'
 }
