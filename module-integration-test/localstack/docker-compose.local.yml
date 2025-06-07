@@ -4,13 +4,37 @@ volumes:
   zookeeper-data: { } # ZooKeeper 데이터 저장용 볼륨 정의
 
 services:
+  localstack:
+    image: "localstack/localstack:3"
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3, sqs, lambda, logs
+      - REGION=ap-northeast-2
+      - LAMBDA_EXECUTOR=docker-reuse
+      - PORT_WEB_UI=8080
+      - KINESIS_ERROR_PROBABILITY=0.25
+      - LOG_LEVEL=error
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_DOCKER_NETWORK=localnet
+    volumes:
+      - "${LAMBDA_BUILD_PATH}:/var/task/lambda-zip"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - localnet
+
   spring-server:
     build:
-      context: ../
-      dockerfile: module-api/Dockerfile
+      context: "${ROOT_DIR}"
+      dockerfile: "${ROOT_DIR}/module-api/Dockerfile"
     container_name: spring-server
     ports:
       - "8080:8080"
+    networks:
+      - localnet
+    depends_on:
+      - localstack
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -24,12 +48,6 @@ services:
       - zookeeper-data:/var/lib/zookeeper/data # ZooKeeper 데이터 영속성을 위한 볼륨
     networks:
       - localnet
-    healthcheck: # ZooKeeper 헬스체크
-      test: [ "CMD", "sh", "-c", "echo ruok | nc localhost 2181 | grep imok" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -40,6 +58,8 @@ services:
 
     volumes:
       - kafka-data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1 # 클러스터 내에서 고유한 브로커 ID
       KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181 # ZooKeeper 서비스의 호스트명과 포트 (서비스 이름:포트)
@@ -69,16 +89,8 @@ services:
 
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false" # 토픽 자동 생성 비활성화 (프로덕션 권장)
 
-    healthcheck:
-      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s # Kafka 시작까지의 대기 시간
-    restart: unless-stopped
-    networks:
-      - localnet
 
 networks:
   localnet:
+    name: localnet
     driver: bridge

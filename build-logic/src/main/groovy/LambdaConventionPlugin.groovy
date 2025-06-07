@@ -39,14 +39,15 @@ class LambdaConventionPlugin implements Plugin<Project> {
             group = "Lambda"
             description = "Lambda 코드를 zip으로 패키징"
 
-            println "zipDir    " + zipDir
+            println "[zipLambda] Lambda zip 패키징 시작"
+
             from(srcDir) {
                 include "index.js"
                 include "node_modules/**"
             }
 
             doFirst {
-                println "📦 Lambda 압축 대상 경로: ${zipDir.get().asFile}"
+                println "[zipLambda] 📦 Lambda 압축 대상 경로: ${zipDir.get().asFile}"
             }
 
             archiveFileName.set("index.zip")
@@ -72,7 +73,12 @@ class LambdaConventionPlugin implements Plugin<Project> {
             group = "Lambda"
             description = "Lambda zip 배포"
 
-            println "zipPath    " + zipPath
+            println "Lambda zip 배포 시작"
+            println "[zipPath]         " + zipPath
+            println "[endPointUrl]     " + endPointUrl
+            println "[functionName]    " + functionName
+            println "[region]          " + region
+
 
             workingDir = scriptsDir.asFile
 
@@ -82,6 +88,9 @@ class LambdaConventionPlugin implements Plugin<Project> {
             environment "REGION", region
 
             commandLine "sh", "lambda-deploy.sh"
+
+            standardOutput = System.out
+            errorOutput = System.err
         }
     }
 }

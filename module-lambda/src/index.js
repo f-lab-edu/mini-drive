@@ -5,7 +5,7 @@ const {Kafka} = require('kafkajs');
 
 // Kafka 클라이언트 생성
 const kafka = new Kafka({
-    clientId: 'upload-callback-lambda', brokers: ['kafka-broker:29092']
+    clientId: 'upload-callback-lambda', brokers: ['localhost:29092']
 });
 
 // Kafka 프로듀서 생성
@@ -46,23 +46,35 @@ const handler = async (event) => {
 
             // await postToServer("http://localhost:8080/api/v1/files/upload/callback", callbackBody);
             // console.log("✅ 콜백 요청 성공");
-
+            /*
+                await sendToKafka("upload.completed.callback", {
+                    bucket,
+                    key,
+                    size,
+                    driveId: userMetadata["driveid"],
+                    fileName: userMetadata["filename"],
+                    mimeType: userMetadata["mimetype"],
+                    parentId: userMetadata["parentid"],
+                    timestamp: new Date().toISOString()
+                });
+            */
+            console.log("📤 Kafka 이벤트 전송 준비 완료");
             await sendToKafka("upload.completed.callback", {
                 bucket,
                 key,
                 size,
-                driveId: userMetadata["driveid"],
-                fileName: userMetadata["filename"],
-                mimeType: userMetadata["mimetype"],
-                parentId: userMetadata["parentid"],
+                driveId: "drveId", // userMetadata["driveid"],
+                fileName: "fileName", // userMetadata["filename"],
+                mimeType: "img/png", // userMetadata["mimetype"],
+                parentId: "root", // userMetadata["parentid"],
                 timestamp: new Date().toISOString()
             });
-
         } catch (error) {
             console.error("❌ 레코드 처리 실패:", error);
             batchItemFailures.push({itemIdentifier: record.messageId});
         }
     }
+
 
     return {batchItemFailures};
 };
@@ -110,7 +122,11 @@ function postToServer(endpoint, body) {
 // S3에서 사용자 메타데이터 조회
 async function getUserMetaData(bucket, key) {
     try {
-        const s3 = new S3Client({region: "ap-northeast-2"});
+        const s3 = new S3Client({
+            region: "ap-northeast-2",
+            endpoint: "http://localstack:4566",
+            forcePathStyle: true
+        });
         const command = new HeadObjectCommand({Bucket: bucket, Key: key});
         const response = await s3.send(command);
         return response.Metadata || {};

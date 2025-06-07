@@ -3,10 +3,15 @@ set -e
 
 echo "✅ 전달된 ZIP_PATH: [$ZIP_PATH]"
 ls -lh "$ZIP_PATH" || echo "❌ 존재하지 않음"
+echo "✅ FUNCTION_NAME: [$FUNCTION_NAME]"
+echo "✅ REGION: [$REGION]"
+echo "✅ ENDPOINT_URL: [$ENDPOINT_URL]"
 
 if awslocal lambda get-function \
   --function-name "$FUNCTION_NAME" \
+  --region "$REGION" \
   --endpoint-url="$ENDPOINT_URL" &> /dev/null; then
+
   echo "Lambda 함수가 존재하므로 업데이트합니다..."
   awslocal lambda invoke \
     --function-name "$FUNCTION_NAME" \
