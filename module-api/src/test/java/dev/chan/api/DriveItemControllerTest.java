@@ -3,30 +3,44 @@ package dev.chan.api;
 
 import dev.chan.api.file.DriveItemController;
 import dev.chan.application.file.DriveItemService;
+import dev.chan.application.file.PresignedUrlService;
 import dev.chan.common.exception.GlobalExceptionHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
+@ExtendWith(MockitoExtension.class)
 public class DriveItemControllerTest {
 
     private MockMvc mockMvc;
+
+    @Mock
+    private PresignedUrlService presignedUrlService;
+
+    @Mock
     private DriveItemService driveItemService;
+
+    @InjectMocks
+    DriveItemController driveItemController;
 
 
     @BeforeEach
     void setUp() {
-        driveItemService = mock(DriveItemService.class); // Mockito mock
-        DriveItemController controller = new DriveItemController(driveItemService);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new GlobalExceptionHandler()) // 있다면 설정
+        mockMvc = MockMvcBuilders.standaloneSetup(driveItemController)
+                .setControllerAdvice(new GlobalExceptionHandler()) // 있다면 설정
                 .build();
     }
 
@@ -67,4 +81,42 @@ public class DriveItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isBadRequest());
     }
+
+    /*
+    @Test
+    @DisplayName("Presigned URL 요청에 대해 CompletableFuture로 응답한다")
+    void shouldReturnPresignedUrl_whenValidRequest() throws Exception {
+        //given
+        String content = """
+                {
+                  "driveId": "test-drive-id",
+                  "parentId": "test-parent-id",
+                  "fileMetaDataDtoList": [
+                    {
+                      "name": "test-file.txt",
+                      "size": 12345,
+                      "mimeType": "text/plain"
+                    }
+                  ]
+                }
+                """;
+        List<PresignedUrlResponse> urls = List.of(
+                new PresignedUrlResponse("drive-id", "parent-id", "text/plain", "test-file.txt", 20L, MimeType.TEXT, "url", null)
+        );
+
+        //when
+
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/files/upload/async")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(request().asyncStarted())
+                .andReturn();
+
+        //then
+        mockMvc.perform(asyncDispatch(mvcResult))
+                .andExpect(status().isOk());
+
+    }*/
+
 }

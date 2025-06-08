@@ -12,7 +12,6 @@ import java.util.UUID;
 public class S3KeyGenerator {
 
     public String generateFileKey(FileKeySpecification specification) {
-
         log.info("specification = {} ", specification.toString());
 
         return String.format("%s/%s/%s/%s_%s",

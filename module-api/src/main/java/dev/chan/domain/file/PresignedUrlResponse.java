@@ -11,8 +11,8 @@ public record PresignedUrlResponse(
         String name,
         Long size,
         MimeType mimeType,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         String url,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         Instant expiredAt
 ) {
     public static PresignedUrlResponse from(PresignedUrlSpecification spec, String url, Instant expiredAt) {

@@ -5,7 +5,7 @@ aws:
   s3:
     bucket: mini-drive-dev-upload
     upload-prefix: uploads
-    
+
 logging:
   level:
     org:
