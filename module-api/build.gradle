@@ -1,9 +1,10 @@
 
 plugins {
     id 'convention.aws-s3'
-    id 'convention.spring-boot'
+    id 'convention.spring-boot-web'
     id 'convention.java-toolchain'
     id 'convention.kafka'
+    id 'convention.test-container'
 }
 
 repositories {

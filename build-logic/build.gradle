@@ -14,9 +14,15 @@ repositories {
 // 컨벤션 플러그인을 gradle 플러그인으로 등록
 gradlePlugin {
     plugins {
-        springbootConvention {
-            id = 'convention.spring-boot'
-            implementationClass = "SpringBootConventionPlugin"
+
+        springbootStarterConvention {
+            id = 'convention.spring-boot-starter'
+            implementationClass = "SpringBootStarterConventionPlugin"
+        }
+
+        springbootWebConvention {
+            id = 'convention.spring-boot-web'
+            implementationClass = "SpringBootWebConventionPlugin"
         }
 
         awsS3Convention {
@@ -42,6 +48,11 @@ gradlePlugin {
         lambdaConvention{
             id = "convention.lambda"
             implementationClass = "LambdaConventionPlugin"
+        }
+
+        testContainersConvention {
+            id = "convention.test-container"
+            implementationClass = "TestcontainersConventionPlugin"
         }
     }
 }

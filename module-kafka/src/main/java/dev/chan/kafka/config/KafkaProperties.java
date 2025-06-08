@@ -1,10 +1,15 @@
 package dev.chan.kafka.config;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties( prefix = "spring.kafka")
+import java.util.List;
+
+@Getter
+@ConfigurationProperties(prefix = "spring.kafka")
+@RequiredArgsConstructor
 public class KafkaProperties {
-
-    private String bootstrapServers;
-
+    
+    private final List<String> bootstrapServers;
 }
