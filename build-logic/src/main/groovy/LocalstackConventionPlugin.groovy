@@ -31,7 +31,7 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                 workingDir = localstackDir
                 commandLine "sh", "-c", """
                     echo 'Localstack 컨테이너 시작 중...'
-                    docker compose -f docker-compose.local.yml up -d
+                    docker compose -f docker-compose.test.yml up -d
                 """.stripIndent()
 
                 environment = ["LAMBDA_BUILD_PATH": lambdaZipPath,
@@ -60,7 +60,7 @@ class LocalstackConventionPlugin implements Plugin<Project> {
                 workingDir = localstackDir
                 commandLine "sh", "-c", """
                     echo 'Localstack 컨테이너 종료 중...'
-                    docker compose -f docker-compose.local.yml down
+                    docker compose -f docker-compose.test.yml down
                 """.stripIndent()
 
                 standardOutput = System.out

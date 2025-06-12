@@ -1,11 +1,11 @@
 package dev.chan.application.file;
 
 import dev.chan.api.file.request.FileMetaDataDto;
-import dev.chan.application.file.command.PresignedUrlCommand;
-import dev.chan.application.file.key.S3KeyGenerator;
+import dev.chan.application.command.PresignedUrlCommand;
 import dev.chan.config.AwsProperties;
-import dev.chan.domain.file.PresignedUrlResponse;
-import dev.chan.domain.file.PresignedUrlSpecification;
+import dev.chan.infrastructure.aws.PresignedUrlResponse;
+import dev.chan.infrastructure.aws.PresignedUrlSpecification;
+import dev.chan.infrastructure.aws.S3KeyGenerator;
 import dev.chan.infrastructure.aws.S3PresignedUrlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

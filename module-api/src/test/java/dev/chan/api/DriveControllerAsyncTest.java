@@ -1,8 +1,9 @@
 package dev.chan.api;
 
+import dev.chan.api.file.request.FileMetaDataDto;
+import dev.chan.application.command.PresignedUrlCommand;
 import dev.chan.application.file.PresignedUrlService;
-import dev.chan.application.file.command.PresignedUrlCommand;
-import dev.chan.domain.file.PresignedUrlResponse;
+import dev.chan.infrastructure.aws.PresignedUrlResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -27,7 +29,7 @@ public class DriveControllerAsyncTest {
     @DisplayName("동기 vs 비동기 presignedUrl 성능 측정")
     void measurePerformance() {
         // given
-        PresignedUrlCommand command = PresignedUrlCommand.of(50); // 50개 테스트
+        PresignedUrlCommand command = of(50); // 50개 테스트
 
         // warm-up (JIT에 의한 영향 제거)
         for (int i = 0; i < 5; i++) {
@@ -52,5 +54,18 @@ public class DriveControllerAsyncTest {
 
         assertThat(syncResults).hasSize(50);
         assertThat(asyncResults).hasSize(50);
+    }
+
+    /**
+     * 테스트용 메테데이터 생성 메서드
+     *
+     * @param count
+     * @return
+     */
+    public static PresignedUrlCommand of(int count) {
+        List<FileMetaDataDto> metaList = IntStream.range(0, count)
+                .mapToObj(i -> new FileMetaDataDto("file" + i + ".txt", 1024L, "text/plain"))
+                .toList();
+        return new PresignedUrlCommand("drive-123", "parent-123", metaList);
     }
 }

@@ -1,7 +1,7 @@
 package dev.chan.api.file.request;
 
+import dev.chan.common.MimeType;
 import dev.chan.domain.file.FileMetaData;
-import dev.chan.domain.file.MimeType;
 import lombok.*;
 
 @Getter

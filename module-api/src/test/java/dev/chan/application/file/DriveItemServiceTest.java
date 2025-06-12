@@ -3,11 +3,10 @@ package dev.chan.application.file;
 
 import dev.chan.application.file.command.FolderCreateCommand;
 import dev.chan.application.file.command.UploadCallbackCommand;
-import dev.chan.common.exception.DriveItemNotFoundException;
+import dev.chan.application.file.exception.DriveItemNotFoundException;
+import dev.chan.common.MimeType;
 import dev.chan.domain.file.DriveItem;
 import dev.chan.domain.file.DriveItemRepository;
-import dev.chan.domain.file.MimeType;
-import dev.chan.infrastructure.storage.LocalFileStorage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +23,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DriveItemServiceTest {
 
-    @Mock
-    LocalFileStorage fileStorage;
 
     @Mock
     DriveItemRepository driveItemRepository;

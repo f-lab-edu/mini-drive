@@ -1,7 +1,5 @@
 package dev.chan.infrastructure.aws;
 
-import dev.chan.domain.file.PresignedUrlResponse;
-import dev.chan.domain.file.PresignedUrlSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

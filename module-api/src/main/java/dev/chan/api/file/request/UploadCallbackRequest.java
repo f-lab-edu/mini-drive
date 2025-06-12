@@ -1,8 +1,7 @@
 package dev.chan.api.file.request;
 
 import dev.chan.application.file.command.UploadCallbackCommand;
-import dev.chan.common.util.DriveRootConstants;
-import dev.chan.domain.file.MimeType;
+import dev.chan.common.MimeType;
 import lombok.*;
 
 @Getter
@@ -18,7 +17,7 @@ public class UploadCallbackRequest {
     String fileName;
     long size;
 
-    public UploadCallbackCommand toUploadCallbackCommand() {
-        return new UploadCallbackCommand(MimeType.from(mimeType), driveId, DriveRootConstants.resolveParentId(parentId), fileKey, fileName, size);
+    public UploadCallbackCommand toCommand() {
+        return new UploadCallbackCommand(MimeType.from(mimeType), driveId, parentId, fileKey, fileName, size);
     }
 }

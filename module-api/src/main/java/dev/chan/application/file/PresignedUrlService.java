@@ -1,12 +1,12 @@
 package dev.chan.application.file;
 
-import dev.chan.application.file.command.PresignedUrlCommand;
-import dev.chan.application.file.key.S3KeyGenerator;
+import dev.chan.application.command.PresignedUrlCommand;
 import dev.chan.common.util.ThreadPoolLogger;
 import dev.chan.config.AwsProperties;
 import dev.chan.domain.file.FileKeySpecification;
-import dev.chan.domain.file.PresignedUrlResponse;
-import dev.chan.domain.file.PresignedUrlSpecification;
+import dev.chan.infrastructure.aws.PresignedUrlResponse;
+import dev.chan.infrastructure.aws.PresignedUrlSpecification;
+import dev.chan.infrastructure.aws.S3KeyGenerator;
 import dev.chan.infrastructure.aws.S3PresignedUrlGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,23 +56,28 @@ public class PresignedUrlService {
 
     }
 
+    /**
+     * 비동기 방식으로 presignedUrl을 생성해 List로 반환합니다.
+     *
+     * @param presignedUrlCommand
+     * @return
+     */
     public List<PresignedUrlResponse> generateUploadUrlsAsync(PresignedUrlCommand presignedUrlCommand) {
         List<CompletableFuture<PresignedUrlResponse>> futures = presignedUrlCommand.getFileMetaDataDtoList().stream()
                 .map(metaDto -> CompletableFuture.supplyAsync(() -> {
                     ThreadPoolLogger.logExecutorStats("presignedUrlExecutor", presignedUrlExecutor);
-                    try {
-                        FileKeySpecification keySpec = FileKeySpecification
-                                .toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
 
-                        String key = keyGenerator.generateFileKey(keySpec);
-                        PresignedUrlSpecification urlSpec = PresignedUrlSpecification
-                                .toUrlSpec(properties.getBucketName(), presignedUrlCommand, key, metaDto.toMetadata());
-                        return urlGenerator.createPresignedUrl(urlSpec);
-                    } catch (Exception e) {
-                        log.error("Presigned URL 생성 실패: {}", metaDto.getName(), e);
-                        throw new RuntimeException("Presigned URL 생성 중 오류 발생", e);
-                    }
-                }, presignedUrlExecutor)).toList();
+                    FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
+
+                    String key = keyGenerator.generateFileKey(keySpec);
+
+                    PresignedUrlSpecification urlSpec = PresignedUrlSpecification.toUrlSpec(properties.getBucketName(), presignedUrlCommand, key, metaDto.toMetadata());
+
+                    return urlGenerator.createPresignedUrl(urlSpec);
+                }, presignedUrlExecutor).exceptionally(ex -> {
+                    log.error("비동기 Presigned URL 생성 중 오류 발생: {}", metaDto.getName(), ex);
+                    throw new RuntimeException("presignedUrl 생성 중 오류 발생", ex); // 예외 발생 시 null 반환
+                })).toList();
 
         //스레드 풀 상태 로깅
         ThreadPoolLogger.logExecutorStats("presignedUrlExecutor", presignedUrlExecutor);
@@ -80,6 +85,6 @@ public class PresignedUrlService {
         return futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
-        
+
     }
 }
