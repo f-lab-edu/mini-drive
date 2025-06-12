@@ -1,10 +1,8 @@
 package dev.chan.infrastructure.aws;
 
+import dev.chan.common.MimeType;
 import dev.chan.config.AwsProperties;
 import dev.chan.domain.file.FileMetaData;
-import dev.chan.domain.file.MimeType;
-import dev.chan.domain.file.PresignedUrlResponse;
-import dev.chan.domain.file.PresignedUrlSpecification;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

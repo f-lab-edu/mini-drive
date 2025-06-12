@@ -1,0 +1,7 @@
+# application.yml
+aws:
+  profile: test
+  region: ap-northeast-2
+  s3:
+    bucket: mini-drive-dev-upload
+    upload-prefix: uploads

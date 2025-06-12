@@ -1,5 +1,3 @@
-
-
 pluginManagement {
     includeBuild('build-logic')
 }
@@ -9,5 +7,12 @@ plugins {
 }
 
 rootProject.name = 'mini-drive'
-include('module-api', 'module-kafka', 'module-lambda', 'module-integration-test')
+include('module-api',
+        'module-kafka',
+        'module-lambda',
+        'module-integration-test',
+        'module-consumer',
+        'module-common',
+        'module-core'
+)
 

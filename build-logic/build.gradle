@@ -30,22 +30,17 @@ gradlePlugin {
             implementationClass = "AwsS3ConventionPlugin"
         }
 
-        javaToolchainConvention {
-            id = "convention.java-toolchain"
-            implementationClass = "JavaToolchainConventionPlugin"
-        }
-
         kafkaConvention {
             id = "convention.kafka"
             implementationClass = "KafkaConventionPlugin"
         }
 
-        localstackConvention{
+        localstackConvention {
             id = "convention.localstack"
             implementationClass = "LocalstackConventionPlugin"
         }
 
-        lambdaConvention{
+        lambdaConvention {
             id = "convention.lambda"
             implementationClass = "LambdaConventionPlugin"
         }
@@ -54,6 +49,21 @@ gradlePlugin {
             id = "convention.test-container"
             implementationClass = "TestcontainersConventionPlugin"
         }
+
+        javaComonConvention {
+            id = "convention.java-common"
+            implementationClass = "JavaCommonConventionPlugin"
+        }
+
+        springBootDomainConvention {
+            id = "convention.spring-boot-domain"
+            implementationClass = "SpringBootDomainConventionPlugin"
+        }
+
+        springBomConvention {
+            id = "convention.spring-bom"
+            implementationClass = "SpringBomConventionPlugin"
+        }
     }
 }
 
@@ -61,7 +71,8 @@ gradlePlugin {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
+
+    // 플러그인이 동작하게 하기위한 코드 리소스
     implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5'
     implementation 'com.github.node-gradle:gradle-node-plugin:7.0.1'
-
 }

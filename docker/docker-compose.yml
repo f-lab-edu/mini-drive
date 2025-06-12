@@ -5,15 +5,17 @@ volumes:
 services:
   spring-server:
     build:
-      context: ../
-      dockerfile: module-api/Dockerfile
+      context: "${ROOT_DIR}"
+      dockerfile: "${ROOT_DIR}/module-api/Dockerfile"
     container_name: spring-server
     ports:
       - "8080:8080"
+    networks:
+      - localnet
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: kafka-zookeeper
+    container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
@@ -23,12 +25,6 @@ services:
       - zookeeper-data:/var/lib/zookeeper/data # ZooKeeper 데이터 영속성을 위한 볼륨
     networks:
       - localnet
-    healthcheck: # ZooKeeper 헬스체크
-      test: [ "CMD", "sh", "-c", "echo ruok | nc localhost 2181 | grep imok" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -39,9 +35,11 @@ services:
 
     volumes:
       - kafka-data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1 # 클러스터 내에서 고유한 브로커 ID
-      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181 # ZooKeeper 서비스의 호스트명과 포트 (서비스 이름:포트)
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # ZooKeeper 서비스의 호스트명과 포트 (서비스 이름:포트)
 
       # 리스너 정의: 실제 브로커가 어떤 네트워크 인터페이스와 포트를 리스닝할지
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
@@ -67,17 +65,8 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3
 
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false" # 토픽 자동 생성 비활성화 (프로덕션 권장)
-
-    healthcheck:
-      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s # Kafka 시작까지의 대기 시간
-    restart: unless-stopped
     networks:
       - localnet
-
+      
 networks:
   localnet:
-    driver: bridge

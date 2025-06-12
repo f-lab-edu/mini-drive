@@ -12,11 +12,10 @@ public class AsyncConfig {
     @Bean(name = "presignedUrlExecutor")
     public ThreadPoolTaskExecutor presignedUrlExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(20);
         executor.setMaxPoolSize(30);
-        executor.setQueueCapacity(50);
+        executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("presigned-url-");
-
         executor.initialize();
         return executor;
     }

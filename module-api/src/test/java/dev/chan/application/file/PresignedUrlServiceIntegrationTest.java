@@ -1,10 +1,10 @@
 package dev.chan.application.file;
 
+import dev.chan.common.MimeType;
 import dev.chan.config.LocalstackS3Config;
 import dev.chan.domain.file.FileMetaData;
-import dev.chan.domain.file.MimeType;
-import dev.chan.domain.file.PresignedUrlResponse;
-import dev.chan.domain.file.PresignedUrlSpecification;
+import dev.chan.infrastructure.aws.PresignedUrlResponse;
+import dev.chan.infrastructure.aws.PresignedUrlSpecification;
 import dev.chan.infrastructure.aws.S3PresignedUrlGenerator;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
