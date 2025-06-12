@@ -6,3 +6,8 @@ aws:
   s3:
     bucket: mini-drive-dev-upload
     upload-prefix: uploads
+
+spring:
+  kafka:
+    bootstrap-servers:
+      - kafka-broker:29092

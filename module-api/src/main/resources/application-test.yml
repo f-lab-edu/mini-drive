@@ -1,5 +1,5 @@
 spring:
-  profiles: local
+  profiles: test
   cloud:
     aws:
       region:
