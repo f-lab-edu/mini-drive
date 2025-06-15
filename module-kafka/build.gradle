@@ -1,6 +1,5 @@
 plugins {
     id 'convention.spring-boot-starter'
-    id 'convention.java-toolchain'
     id 'convention.kafka'
 }
 
@@ -14,5 +13,4 @@ tasks.named('jar') {
 
 repositories {
     mavenCentral()
-
 }

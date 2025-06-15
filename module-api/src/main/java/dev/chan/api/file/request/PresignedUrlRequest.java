@@ -1,6 +1,6 @@
 package dev.chan.api.file.request;
 
-import dev.chan.application.file.command.PresignedUrlCommand;
+import dev.chan.application.command.PresignedUrlCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
