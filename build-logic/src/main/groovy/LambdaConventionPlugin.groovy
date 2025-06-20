@@ -15,7 +15,7 @@ class LambdaConventionPlugin implements Plugin<Project> {
             node.download = true
         }
 
-        def lambdaModule = project.findProject(':module-lambda')
+        def lambdaModule = project.findProject(':infra-lambda')
 
         def scriptsDir = lambdaModule.layout.projectDirectory.dir("scripts")
         def srcDir = lambdaModule.layout.projectDirectory.dir("src")
