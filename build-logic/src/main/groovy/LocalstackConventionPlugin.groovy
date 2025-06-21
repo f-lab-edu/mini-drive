@@ -15,7 +15,7 @@ class LocalstackConventionPlugin implements Plugin<Project> {
         def testModule = project.findProject(":module-integration-test")
 
         def rootProjectDir = project.rootProject.layout.projectDirectory.asFile.absolutePath
-        def lambdaZipPath = project.findProject(":module-lambda").layout.buildDirectory.dir("lambda-zip").get().asFile.absolutePath
+        def lambdaZipPath = project.findProject(":infra-lambda").layout.buildDirectory.dir("lambda-zip").get().asFile.absolutePath
 
         def localstackDir = testModule.layout.projectDirectory.dir("localstack")
 

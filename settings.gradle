@@ -7,12 +7,15 @@ plugins {
 }
 
 rootProject.name = 'mini-drive'
-include('module-api',
-        'module-kafka',
-        'module-lambda',
+include('application',
         'module-integration-test',
-        'module-consumer',
         'module-common',
-        'module-core'
+        'module-event-internal',
+        'domain',
+        'infra-kafka',
+        'infra-jpa',
+        'infra-s3-storage',
+        'infra-lambda'
+
 )
 

@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'convention.spring-boot-domain'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":domain")
+    implementation project(":module-common")
+}

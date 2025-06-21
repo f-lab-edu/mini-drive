@@ -1,0 +1,12 @@
+plugins {
+    id 'java-library'
+    id 'convention.java-common'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":module-common")
+}

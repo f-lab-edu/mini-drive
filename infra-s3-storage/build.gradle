@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+    id 'convention.spring-boot-starter'
+    id 'convention.aws'
+    id 'convention.testcontainers'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
+}
+
+dependencies {
+    implementation(project(":domain"))
+    api(project(":module-common"))
+}
+
+repositories {
+    mavenCentral()
+}
