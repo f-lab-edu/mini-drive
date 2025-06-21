@@ -4,7 +4,7 @@ import dev.chan.application.command.PresignedUrlSpecification;
 import dev.chan.application.file.PresignedUrlResponse;
 import dev.chan.application.file.S3PresignedUrlGenerator;
 import dev.chan.common.MimeType;
-import dev.chan.domain.file.FileMetaData;
+import dev.chan.domain.file.FileMetadata;
 import dev.chan.infra.config.AwsProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +41,9 @@ class S3PresignedUrlGeneratorTest {
         // given
         String fileKey = "test/test.pdf";
 
-        FileMetaData metaData = FileMetaData.builder()
-                .name("test.pdf")
-                .size(10)
+        FileMetadata metaData = FileMetadata.builder()
+                .fileName("test.pdf")
+                .fileSize(10L)
                 .mimeType(MimeType.from("application/pdf"))
                 .build();
 

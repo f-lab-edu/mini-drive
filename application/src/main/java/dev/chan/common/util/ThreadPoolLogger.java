@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class ThreadPoolLogger {
 
-    public static void logExecutorStats(String name, ThreadPoolTaskExecutor executor) {
+    public static void logExecutorStats(String fileName, ThreadPoolTaskExecutor executor) {
         ThreadPoolExecutor threadPoolExecutor = executor.getThreadPoolExecutor();
         int poolSize = threadPoolExecutor.getPoolSize();
         int activeCount = threadPoolExecutor.getActiveCount();

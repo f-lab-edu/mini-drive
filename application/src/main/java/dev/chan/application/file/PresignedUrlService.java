@@ -35,7 +35,7 @@ public class PresignedUrlService {
         log.info("[Sync] {}", presignedUrlCommand);
 
         return presignedUrlCommand.getFileMetaDataDtoList().stream().map(metaDto -> {
-            FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
+            FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getFileName(), properties.getUploadPrefix());
 
             //log.info("keySpecification={}", keySpec);
 
@@ -64,7 +64,7 @@ public class PresignedUrlService {
                 .map(metaDto -> CompletableFuture.supplyAsync(() -> {
                     ThreadPoolLogger.logExecutorStats("presignedUrlExecutor", presignedUrlExecutor);
 
-                    FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getName(), properties.getUploadPrefix());
+                    FileKeySpecification keySpec = FileKeySpecification.toKeySpec(presignedUrlCommand.getDriveId(), metaDto.getFileName(), properties.getUploadPrefix());
 
                     String key = keyGenerator.generateFileKey(keySpec);
 
@@ -72,7 +72,7 @@ public class PresignedUrlService {
 
                     return urlGenerator.createPresignedUrl(urlSpec);
                 }, presignedUrlExecutor).exceptionally(ex -> {
-                    log.error("비동기 Presigned URL 생성 중 오류 발생: {}", metaDto.getName(), ex);
+                    log.error("비동기 Presigned URL 생성 중 오류 발생: {}", metaDto.getFileName(), ex);
                     throw new RuntimeException("presignedUrl 생성 중 오류 발생", ex); // 예외 발생 시 null 반환
                 })).toList();
 

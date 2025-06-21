@@ -19,7 +19,7 @@ public class S3KeyGenerator {
                 specification.driveId(),
                 Instant.now(),
                 UUID.randomUUID(),
-                specification.name());
+                specification.fileName());
     }
 
 }

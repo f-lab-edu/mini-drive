@@ -1,7 +1,7 @@
 package dev.chan.api.file.request;
 
 import dev.chan.common.MimeType;
-import dev.chan.domain.file.FileMetaData;
+import dev.chan.domain.file.FileMetadata;
 import lombok.*;
 
 @Getter
@@ -11,12 +11,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileMetaDataDto {
-    String name;
+    String fileName;
     Long size;
     String mimeType;
 
-    public FileMetaData toMetadata() {
-        return FileMetaData.builder()
+    public FileMetadata toMetadata() {
+        return FileMetadata.builder()
                 .name(this.name)
                 .size(this.size)
                 .mimeType(MimeType.from(this.mimeType))

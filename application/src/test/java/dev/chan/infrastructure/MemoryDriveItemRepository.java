@@ -30,17 +30,7 @@ public class MemoryDriveItemRepository implements DriveItemRepository {
             throw new IllegalArgumentException("driveItem must not be null");
         }
 
-        DriveItem newItem = new DriveItem(
-                driveItem.getDriveId(),
-                UUID.randomUUID().toString(),
-                driveItem.getName(),
-                driveItem.getMimeType(),
-                driveItem.getSize(),
-                driveItem.getParent()
-        );
-
-        driveItem.copyOf(newItem);
-        repository.put(driveItem.getId(), driveItem);
+        repository.put(driveItem.getIdToString(), driveItem);
 
         log.info("[MemoryDriveItemRepository.save()] - save drive item {}", driveItem);
         return driveItem;
@@ -48,7 +38,13 @@ public class MemoryDriveItemRepository implements DriveItemRepository {
 
     @Override
     public DriveItem findRootFolder() {
-        return new DriveItem("d1234", null, "root", MimeType.FOLDER, 1234L, null);
+        return DriveItem.from(
+                "d1234",
+                "root",
+                MimeType.FOLDER,
+                1234L,
+                null
+        );
     }
 
     @Override

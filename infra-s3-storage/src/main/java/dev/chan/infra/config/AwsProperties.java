@@ -25,11 +25,11 @@ public class AwsProperties {
     @Getter
     @RequiredArgsConstructor
     public static class Secret {
-        private final String name;
+        private final String fileName;
     }
 
     public String getSecretName() {
-        return secret.getName();
+        return secret.getFileName();
     }
 
     @Getter

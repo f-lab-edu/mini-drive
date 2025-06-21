@@ -1,6 +1,6 @@
 package dev.chan.application.command;
 
-import dev.chan.domain.file.FileMetaData;
+import dev.chan.domain.file.FileMetadata;
 
 import java.util.Map;
 
@@ -9,8 +9,8 @@ public record PresignedUrlSpecification(
         String driveId,
         String parentId,
         String fileKey,
-        FileMetaData metaData) {
-    public static PresignedUrlSpecification toUrlSpec(String bucketName, PresignedUrlCommand command, String fileKey, FileMetaData meta) {
+        FileMetadata metaData) {
+    public static PresignedUrlSpecification toUrlSpec(String bucketName, PresignedUrlCommand command, String fileKey, FileMetadata meta) {
         return new PresignedUrlSpecification(bucketName, command.getDriveId(), command.getParentId(), fileKey, meta);
     }
 
@@ -18,9 +18,17 @@ public record PresignedUrlSpecification(
         return Map.of("driveId", driveId,
                 "parentId", parentId,
                 "fileKey", fileKey,
-                "size", String.valueOf(metaData.getSize()),
-                "mimeType", metaData.getMimeType().getMime(),
-                "fileName", metaData.getName());
+                "size", metaData.sizeToString(),
+                "mimeType", metaData.contentType(),
+                "fileName", metaData.fileName());
+    }
+
+    public String fileName() {
+        return this.metaData.fileName();
+    }
+
+    public long size() {
+        return this.metaData.size();
     }
 }
 

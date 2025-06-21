@@ -7,6 +7,6 @@ public record FolderCreateCommand(
         String driveId,
         String parentId,
         MimeType mimeType,
-        String name
+        String fileName
 ) {
 }

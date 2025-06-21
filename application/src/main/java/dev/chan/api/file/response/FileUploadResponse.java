@@ -1,6 +1,6 @@
 package dev.chan.api.file.response;
 
-import dev.chan.domain.file.FileMetaData;
+import dev.chan.domain.file.FileMetadata;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class FileUploadResponse {
     private String driveId;
-    private List<FileMetaData> metaDataList;
+    private List<FileMetadata> metaDataList;
 }

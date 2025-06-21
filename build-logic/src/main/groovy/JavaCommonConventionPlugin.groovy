@@ -2,6 +2,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 class JavaCommonConventionPlugin implements Plugin<Project> {
@@ -35,6 +36,10 @@ class JavaCommonConventionPlugin implements Plugin<Project> {
 
         project.extensions.getByType(JavaPluginExtension).toolchain {
             languageVersion = JavaLanguageVersion.of(21)
+        }
+
+        project.tasks.withType(Test).configureEach {
+            useJUnitPlatform()
         }
 
         project.tasks.withType(JavaCompile).configureEach {

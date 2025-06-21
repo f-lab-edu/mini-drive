@@ -4,7 +4,7 @@ import dev.chan.application.command.PresignedUrlSpecification;
 import dev.chan.application.file.PresignedUrlResponse;
 import dev.chan.application.file.S3PresignedUrlGenerator;
 import dev.chan.common.MimeType;
-import dev.chan.domain.file.FileMetaData;
+import dev.chan.domain.file.FileMetadata;
 import dev.chan.infra.config.LocalstackS3Config;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +79,11 @@ public class PresignedUrlServiceIntegrationTest {
         String driveId = "d1234";
         String parentId = "p1234";
         String key = "test.txt";
-        FileMetaData meta = FileMetaData.builder().size(10L).name("f1234").mimeType(MimeType.from("text/plain")).build();
+        FileMetadata meta = FileMetadata.builder()
+                .fileSize(10L)
+                .fileName("f1234")
+                .mimeType(MimeType.from("text/plain")).build();
+
         return new PresignedUrlSpecification(bucketName, driveId, parentId, key, meta);
     }
 }

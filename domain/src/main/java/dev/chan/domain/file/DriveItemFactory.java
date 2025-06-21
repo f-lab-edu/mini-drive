@@ -4,8 +4,6 @@ import dev.chan.common.MimeType;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Builder
 @Data
 public class DriveItemFactory {
@@ -15,21 +13,17 @@ public class DriveItemFactory {
     private String fileKey;
     private long size;
 
-    public static DriveItem createFrom(String driveId, String id, MimeType mimeType, long size, String name) {
+    public static DriveItem createFrom(String driveId, MimeType mimeType, long size, String fileName) {
         return DriveItem.builder()
-                .id(UUID.randomUUID().toString())
                 .driveId(driveId)
-                .mimeType(mimeType)
-                .size(size)
-                .name(name)
+                .metadata(new FileMetadata(mimeType, fileName, size))
                 .build();
     }
 
-    public static DriveItem createFrom(String driveId, MimeType mimeType, String name) {
+    public static DriveItem createFolder(String driveId, MimeType mimeType, String fileName) {
         return DriveItem.builder()
                 .driveId(driveId)
-                .mimeType(mimeType)
-                .name(name)
+                .metadata(new FileMetadata(mimeType, fileName))
                 .build();
     }
 

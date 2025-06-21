@@ -5,12 +5,20 @@ import dev.chan.infra.entity.JpaDriveItemEntity;
 
 import java.util.ArrayList;
 
+
 public class DriveItemJpaMapper {
+
+    /**
+     * 도메인을 JPA Entity로 변환
+     *
+     * @param item
+     * @return
+     */
     public static JpaDriveItemEntity toJpaDriveItemEntity(DriveItem item) {
         return JpaDriveItemEntity.builder()
                 .id(item.getId())
                 .driveId(item.getDriveId())
-                .name(item.getName())
+                .fileName(item.getFileName())
                 .size(item.getSize())
                 .mimeType(item.getMimeType())
                 .createdAt(item.getCreatedAt())
@@ -19,17 +27,23 @@ public class DriveItemJpaMapper {
                 .build();
     }
 
+    /**
+     * JPA Entity를 DriveItem 도메인으로 변환
+     *
+     * @param entity
+     * @return
+     */
     public static DriveItem toDomain(JpaDriveItemEntity entity) {
-        return new DriveItem(
+        return DriveItem.of(
                 entity.getId(),
                 entity.getDriveId(),
-                entity.getName(),
+                entity.getFileName(),
                 entity.getSize(),
                 entity.getMimeType(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.getCreatedBy(),
-                null,
+                entity.getParent(),
                 new ArrayList<>()
         );
 

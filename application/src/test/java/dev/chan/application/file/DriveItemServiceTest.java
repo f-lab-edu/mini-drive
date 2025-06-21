@@ -6,6 +6,7 @@ import dev.chan.application.command.UploadCallbackCommand;
 import dev.chan.common.MimeType;
 import dev.chan.domain.file.DriveItem;
 import dev.chan.domain.file.DriveItemRepository;
+import dev.chan.domain.file.FileMetadata;
 import dev.chan.domain.publisher.DriveItemEventPublisher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class DriveItemServiceTest {
         verify(driveItemRepository, times(1)).save(any());
 
         assertThat(registered).isNotNull();
-        assertThat(registered.getName()).isEqualTo(command.fileName());
+        assertThat(registered.getFileName()).isEqualTo(command.fileName());
         assertThat(registered.getMimeType()).isEqualTo(command.mimeType());
         assertThat(registered.getSize()).isEqualTo(command.size());
         assertThat(registered.getParent()).isEqualTo(parent);
@@ -80,20 +81,19 @@ class DriveItemServiceTest {
     }
 
     private DriveItem folder() {
-        return DriveItem.builder()
-                .driveId("d1234")
-                .id("f12345")
-                .name("myFolder")
-                .mimeType(MimeType.from("application/vnd.mini-drive.folder"))
-                .parent(rootFolder())
-                .build();
+        return DriveItem.from(
+                "d1234",
+                "myFolder",
+                MimeType.from("application/vnd.mini-drive.folder"),
+                0L,                   // 폴더이므로 size는 0
+                rootFolder()
+        );
     }
 
     private DriveItem rootFolder() {
         return DriveItem.builder()
                 .driveId("d1234")
-                .id("root")
-                .mimeType(MimeType.from("application/vnd.mini-drive.folder"))
+                .metadata(FileMetadata.ofFolder(MimeType.from("application/vnd.mini-drive.folder"), "fileName"))
                 .parent(null)
                 .build();
     }

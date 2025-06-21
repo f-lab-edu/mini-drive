@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
     private String id;
-    private String name;
+    private String fileName;
     private String email;
     private String password;
     private String profile;
     private String phoneNumber;
-    
+
 }
