@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -22,6 +19,7 @@ public class DriveItem {
     private String driveId;
     private FileMetadata metadata;
     private LocalDateTime createdAt;
+    private Thumbnail thumbnail;
     private String createdBy;
 
     /*== 아이템 상태 필드 ==*/
@@ -113,6 +111,10 @@ public class DriveItem {
     // fileKey 필드를 따로 두지않고 편의성 메서드로 관리하시 위한 메서드
     public String fileKey(String prefix) {
         return prefix + this.driveId + "/files/" + this.getId();
+    }
+
+    public Optional<Thumbnail> getThumbnail() {
+        return Optional.ofNullable(thumbnail);
     }
 
     // URL 생성을 위한 키 생성 편의성 메서드

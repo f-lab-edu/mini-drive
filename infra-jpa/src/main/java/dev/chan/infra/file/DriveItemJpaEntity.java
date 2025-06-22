@@ -1,4 +1,4 @@
-package dev.chan.infra.entity;
+package dev.chan.infra.file;
 
 import dev.chan.common.MimeType;
 import dev.chan.domain.file.DriveItem;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
-public class JpaDriveItemEntity {
+public class DriveItemJpaEntity {
     private UUID id;
     private String fileName;
     private MimeType mimeType;

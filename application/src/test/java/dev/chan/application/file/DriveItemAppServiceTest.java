@@ -7,10 +7,12 @@ import dev.chan.application.vo.UploadCallbackResult;
 import dev.chan.common.MimeType;
 import dev.chan.domain.UploadedFileRegisteredEvent;
 import dev.chan.domain.file.DriveItem;
+import dev.chan.domain.file.DriveItemEventPublisher;
 import dev.chan.domain.file.DriveItemFactory;
 import dev.chan.domain.file.FileMetadata;
-import dev.chan.domain.publisher.DriveItemEventPublisher;
-import dev.chan.infrastructure.MemoryDriveItemRepository;
+import dev.chan.domain.userstate.UserItemState;
+import dev.chan.infrastructure.DriveItemMemoryRepository;
+import dev.chan.infrastructure.UserItemStateMemoryRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,13 @@ class DriveItemAppServiceTest {
     DriveItemEventPublisher domainEventPublisher;
 
     @Mock
-    MemoryDriveItemRepository driveItemRepository;
+    DriveItemMemoryRepository driveItemRepository;
+
+    @Mock
+    ThumbnailProperties thumbnailProperties;
+
+    @Mock
+    UserItemStateMemoryRepositoryImpl userItemStateRepository;
 
     @InjectMocks
     DriveItemAppService driveItemAppService;
@@ -55,11 +63,17 @@ class DriveItemAppServiceTest {
                 command.fileName(),
                 command.userId()
         );
+
+        // 썸네일 cdn 도메인
+        String domain = "https://cdn.mini-drive.dev/";
+
         doReturn(Optional.of(parent)).when(driveItemRepository).findById(any());
         doReturn(savedItem).when(driveItemRepository).save(any());
+        //doReturn(domain).when(thumbnailProperties).getDomain();
 
         ArgumentCaptor<DriveItem> itemCaptor = ArgumentCaptor.forClass(DriveItem.class);
         ArgumentCaptor<UploadedFileRegisteredEvent> eventCaptor = ArgumentCaptor.forClass(UploadedFileRegisteredEvent.class);
+        // ArgumentCaptor<ThumbnailItemPolicy> thumbnailPolicyCaptor = ArgumentCaptor.forClass(ThumbnailItemPolicy.class);
 
         // when
         UploadCallbackResult result = driveItemAppService.registerUploadedFile(command);
@@ -82,6 +96,44 @@ class DriveItemAppServiceTest {
         assertThat(actualEvent.getDriveId()).isEqualTo(savedItem.getDriveId());
         assertThat(actualEvent.getParentId()).isEqualTo(savedItem.getParentId());
         assertThat(actualEvent.getFileId()).isEqualTo(savedItem.getIdToString());
+
+        /*== 리턴 객체 검증 ==*/
+        assertThat(result).isNotNull();
+        assertThat(result.driveItem()).isEqualTo(savedItem);
+
+
+    }
+
+    @Test
+    @DisplayName("UploadCallback 테이터를 DriveItemRepository 저장에 성공하면, 저장된 아이템 데이터로 UserItemState 를 저장한다.")
+    void saveUserItemState_success() {
+        //given
+        DriveItem savedItem = DriveItemFactory.createFrom(
+                "driveId",
+                rootFolder(),
+                UUID.randomUUID().toString(),
+                "text/plain",
+                10L,
+                "test.txt",
+                "user1"
+        );
+
+        doReturn(Optional.of(rootFolder())).when(driveItemRepository).findById(any());
+        doReturn(savedItem).when(driveItemRepository).save(any());
+        ArgumentCaptor<UserItemState> stateCaptor = ArgumentCaptor.forClass(UserItemState.class);
+
+        //when
+        driveItemAppService.registerUploadedFile(uploadCallbackCommand());
+
+        //then
+        verify(userItemStateRepository).save(stateCaptor.capture());
+        UserItemState actualValue = stateCaptor.getValue();
+
+        assertThat(actualValue).isNotNull();
+        assertThat(actualValue.getId()).isNotNull();
+        assertThat(actualValue.getFileId()).isEqualTo(savedItem.getId());
+        assertThat(actualValue.getCreatedBy()).isEqualTo(savedItem.getCreatedBy());
+
     }
 
 

@@ -1,9 +1,7 @@
-package dev.chan.infra;
+package dev.chan.infra.file;
 
 import dev.chan.domain.file.DriveItem;
 import dev.chan.domain.file.DriveItemRepository;
-import dev.chan.infra.entity.JpaDriveItemEntity;
-import dev.chan.infra.mapper.DriveItemJpaMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -19,7 +17,7 @@ public class DriveItemRepositoryImpl implements DriveItemRepository {
 
     @Override
     public List<DriveItem> saveAll(List<DriveItem> items) {
-        List<JpaDriveItemEntity> entities = items.stream()
+        List<DriveItemJpaEntity> entities = items.stream()
                 .map(DriveItemJpaMapper::toJpaDriveItemEntity)
                 .toList();
         // List<JpaDriveItemEntity> saved = jpa.saveAll(entities);

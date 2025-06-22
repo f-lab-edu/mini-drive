@@ -6,10 +6,11 @@ import dev.chan.application.exception.DriveItemNotFoundException;
 import dev.chan.application.vo.UploadCallbackResult;
 import dev.chan.domain.UploadedFileRegisteredEvent;
 import dev.chan.domain.file.DriveItem;
+import dev.chan.domain.file.DriveItemEventPublisher;
 import dev.chan.domain.file.DriveItemFactory;
 import dev.chan.domain.file.DriveItemRepository;
-import dev.chan.domain.publisher.DriveItemEventPublisher;
 import dev.chan.domain.userstate.UserItemState;
+import dev.chan.domain.userstate.UserItemStateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class DriveItemAppService {
 
     private final DriveItemRepository driveItemRepository;
+    private final UserItemStateRepository userItemStaterepository;
     private final DriveItemEventPublisher domainEventPublisher;
 
     /**
@@ -36,7 +38,7 @@ public class DriveItemAppService {
         DriveItem parent = driveItemRepository.findById(command.parentId())
                 .orElseGet(() -> DriveItem.ofRoot(command.driveId()));
 
-        DriveItem uploadingItem = DriveItemFactory.createFrom(
+        DriveItem newItem = DriveItemFactory.createFrom(
                 command.driveId(),
                 parent,
                 command.fileId(),
@@ -46,7 +48,13 @@ public class DriveItemAppService {
                 command.userId()
         );
 
-        DriveItem savedItem = driveItemRepository.save(uploadingItem);
+        if (newItem.getMimeType().isThumbnailSupported()) {
+            //TODO 썸네일 생성정책에 의한 썸네일생성
+
+        }
+
+        DriveItem savedItem = driveItemRepository.save(newItem);
+
 
         // 파일 아이템 생성 완료 이벤트 등록
         domainEventPublisher.publish(
@@ -57,9 +65,10 @@ public class DriveItemAppService {
 
         // user 별 item 상태 등록
         UserItemState userItemState = UserItemState.create(savedItem.getId(), savedItem.getCreatedBy());
+        UserItemState savedState = userItemStaterepository.save(userItemState);
 
         // 파일 아이템 상태 등록
-        return new UploadCallbackResult(savedItem, userItemState);
+        return new UploadCallbackResult(savedItem, savedState);
     }
 
     /**

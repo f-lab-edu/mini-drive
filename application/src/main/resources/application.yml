@@ -1,3 +1,4 @@
+# TODO infra-aws 이전 예정
 aws:
   profile: local
   region: ap-northeast-2
@@ -7,7 +8,11 @@ aws:
     bucket: mini-drive-dev-upload
     upload-prefix: uploads
 
+# TODO infra kafka 이전 예정
 spring:
   kafka:
     bootstrap-servers:
       - kafka-broker:29092
+      
+thumbnail:
+  domain: https://cdn.mini-drive.dev/

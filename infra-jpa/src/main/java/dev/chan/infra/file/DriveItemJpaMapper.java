@@ -1,7 +1,6 @@
-package dev.chan.infra.mapper;
+package dev.chan.infra.file;
 
 import dev.chan.domain.file.DriveItem;
-import dev.chan.infra.entity.JpaDriveItemEntity;
 
 import java.util.ArrayList;
 
@@ -14,8 +13,8 @@ public class DriveItemJpaMapper {
      * @param item
      * @return
      */
-    public static JpaDriveItemEntity toJpaDriveItemEntity(DriveItem item) {
-        return JpaDriveItemEntity.builder()
+    public static DriveItemJpaEntity toJpaDriveItemEntity(DriveItem item) {
+        return DriveItemJpaEntity.builder()
                 .id(item.getId())
                 .driveId(item.getDriveId())
                 .fileName(item.getFileName())
@@ -33,7 +32,7 @@ public class DriveItemJpaMapper {
      * @param entity
      * @return
      */
-    public static DriveItem toDomain(JpaDriveItemEntity entity) {
+    public static DriveItem toDomain(DriveItemJpaEntity entity) {
         return DriveItem.of(
                 entity.getId(),
                 entity.getDriveId(),

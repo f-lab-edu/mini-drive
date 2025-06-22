@@ -1,6 +1,6 @@
 package dev.chan.kafka.publisher;
 
-import dev.chan.domain.publisher.DriveItemEventPublisher;
+import dev.chan.domain.file.DriveItemEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component

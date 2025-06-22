@@ -1,6 +1,6 @@
 package dev.chan.event;
 
-import dev.chan.domain.publisher.DriveItemEventPublisher;
+import dev.chan.domain.file.DriveItemEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

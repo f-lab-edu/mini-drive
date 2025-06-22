@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Repository
-public class MemoryDriveItemRepository implements DriveItemRepository {
+public class DriveItemMemoryRepository implements DriveItemRepository {
 
     private final ConcurrentHashMap<String, DriveItem> repository = new ConcurrentHashMap<>();
 

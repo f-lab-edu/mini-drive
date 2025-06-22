@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 public class UserItemState {
-
+    private final UUID id;
     private final UUID fileId;
     private boolean important;
     private LocalDateTime lastViewedAt;
@@ -19,9 +19,9 @@ public class UserItemState {
     private LocalDateTime updatedAt;
     private String createdBy;
 
-
     public static UserItemState create(UUID fileId, String userId) {
         return UserItemState.builder()
+                .id(UUID.randomUUID())
                 .fileId(fileId)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

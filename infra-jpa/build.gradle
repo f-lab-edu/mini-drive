@@ -3,6 +3,13 @@ plugins {
     id 'convention.spring-boot-domain'
 }
 
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
 repositories {
     mavenCentral()
 }

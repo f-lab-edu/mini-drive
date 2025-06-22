@@ -10,7 +10,6 @@ class JavaCommonConventionPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.plugins.apply('java')
-
         final def lombokVersion = "1.18.30"
         final def jacksonVersion = "2.17.0"
 
@@ -37,8 +36,10 @@ class JavaCommonConventionPlugin implements Plugin<Project> {
 
         }
 
-        project.extensions.getByType(JavaPluginExtension).toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+        project.extensions.getByType(JavaPluginExtension).with {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(21)
+            }
         }
 
         project.tasks.withType(Test).configureEach {
