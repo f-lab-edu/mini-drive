@@ -14,11 +14,11 @@ public class JpaDriveItemEntity {
     private UUID id;
     private String fileName;
     private MimeType mimeType;
+    private Long size;
     private String driveId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String createdBy;
-    private Long size;
 
     private DriveItem parent;
 }

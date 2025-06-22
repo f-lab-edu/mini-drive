@@ -2,7 +2,7 @@ package dev.chan.api.file;
 
 import dev.chan.api.file.request.PresignedUrlRequest;
 import dev.chan.api.file.request.UploadCallbackRequest;
-import dev.chan.application.file.DriveItemService;
+import dev.chan.application.file.DriveItemAppService;
 import dev.chan.application.file.PresignedUrlResponse;
 import dev.chan.application.file.PresignedUrlService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/files")
 public class DriveItemController {
 
-    private final DriveItemService driveItemService;
+    private final DriveItemAppService driveItemAppService;
     private final PresignedUrlService presignedUrlService;
 
     /**

@@ -1,6 +1,6 @@
 package dev.chan.infra.config;
 
-import dev.chan.application.file.DriveItemService;
+import dev.chan.application.file.DriveItemAppService;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class TestConfig {
     @Bean
-    public DriveItemService driveItemService() {
-        return Mockito.mock(DriveItemService.class);
+    public DriveItemAppService driveItemService() {
+        return Mockito.mock(DriveItemAppService.class);
     }
 }

@@ -39,7 +39,7 @@ public class DriveItemJpaMapper {
                 entity.getDriveId(),
                 entity.getFileName(),
                 entity.getSize(),
-                entity.getMimeType(),
+                entity.getMimeType().getMime(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.getCreatedBy(),

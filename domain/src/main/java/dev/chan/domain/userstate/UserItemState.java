@@ -1,26 +1,31 @@
 package dev.chan.domain.userstate;
 
-import dev.chan.domain.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class UserItemState {
 
-    private User user;
-    private String fileId;
-    private String userId;
+    private final UUID fileId;
     private boolean important;
-    private boolean bookmarked;
     private LocalDateTime lastViewedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String createdBy;
 
 
+    public static UserItemState create(UUID fileId, String userId) {
+        return UserItemState.builder()
+                .fileId(fileId)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .createdBy(userId)
+                .build();
+    }
 }

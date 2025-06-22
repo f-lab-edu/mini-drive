@@ -1,14 +1,13 @@
 package dev.chan.application.command;
 
-import dev.chan.common.MimeType;
-
 public record UploadCallbackCommand(
-        MimeType mimeType,
+        String mimeType,
         String driveId,
         String parentId,
-        String id,
+        String fileId,
         String fileName,
-        long size
+        long size,
+        String userId
 
 ) {
 

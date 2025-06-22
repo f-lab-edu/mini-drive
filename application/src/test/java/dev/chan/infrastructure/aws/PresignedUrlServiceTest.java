@@ -84,7 +84,7 @@ class PresignedUrlServiceTest {
     public static FileMetaDataDto metaDataDto() {
         return FileMetaDataDto.builder()
                 .mimeType("text/plain")
-                .name("test.txt")
+                .fileName("test.txt")
                 .size(10L)
                 .build();
     }

@@ -82,7 +82,7 @@ public class PresignedUrlServiceIntegrationTest {
         FileMetadata meta = FileMetadata.builder()
                 .fileSize(10L)
                 .fileName("f1234")
-                .mimeType(MimeType.from("text/plain")).build();
+                .mimeType(MimeType.TEXT.getMime()).build();
 
         return new PresignedUrlSpecification(bucketName, driveId, parentId, key, meta);
     }

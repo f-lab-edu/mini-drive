@@ -2,7 +2,7 @@ package dev.chan.api;
 
 
 import dev.chan.api.file.DriveItemController;
-import dev.chan.application.file.DriveItemService;
+import dev.chan.application.file.DriveItemAppService;
 import dev.chan.application.file.PresignedUrlService;
 import dev.chan.common.exception.GlobalExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class DriveItemControllerTest {
     private PresignedUrlService presignedUrlService;
 
     @Mock
-    private DriveItemService driveItemService;
+    private DriveItemAppService driveItemAppService;
 
     @InjectMocks
     DriveItemController driveItemController;

@@ -44,7 +44,7 @@ class S3PresignedUrlGeneratorTest {
         FileMetadata metaData = FileMetadata.builder()
                 .fileName("test.pdf")
                 .fileSize(10L)
-                .mimeType(MimeType.from("application/pdf"))
+                .mimeType(MimeType.PDF.getMime())
                 .build();
 
         PresignedUrlSpecification presignedUrlSpecification = new PresignedUrlSpecification(awsProperties.getBucketName(),

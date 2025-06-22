@@ -1,7 +1,6 @@
 package dev.chan.api.file.request;
 
 import dev.chan.application.command.UploadCallbackCommand;
-import dev.chan.common.MimeType;
 import lombok.*;
 
 @Getter
@@ -12,12 +11,13 @@ import lombok.*;
 public class UploadCallbackRequest {
     private String mimeType;
     String driveId;
+    String userId;
     String parentId;
     String fileKey;
     String fileName;
     long size;
 
     public UploadCallbackCommand toCommand() {
-        return new UploadCallbackCommand(MimeType.from(mimeType), driveId, parentId, fileKey, fileName, size);
+        return new UploadCallbackCommand(mimeType, driveId, parentId, fileKey, fileName, size, userId);
     }
 }

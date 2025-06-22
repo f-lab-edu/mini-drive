@@ -1,10 +1,12 @@
-package dev.chan.domain.file;
+package dev.chan.fixture;
 
 import dev.chan.common.MimeType;
+import dev.chan.domain.file.DriveItemId;
+import dev.chan.domain.file.FileMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,31 +14,31 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Slf4j
 @Getter
 @Builder
 @AllArgsConstructor
-public class DriveItem {
+@ToString(exclude = {"parent", "children"})
+public class DriveItemFixture {
     /*== 필수 필드 ==*/
-    private UUID id;
-    private String driveId;
-    private FileMetadata metadata;
-    private LocalDateTime createdAt;
-    private String createdBy;
+    private final DriveItemId id;
+    private final String driveId;
+    private final FileMetadata metadata;
+    private final LocalDateTime createdAt;
+    private final String createdBy;
 
     /*== 아이템 상태 필드 ==*/
     private boolean locked;
     private boolean deleted;
 
     /*== 변경 가능한 필드 ==*/
-    private DriveItem parent;
+    private DriveItemFixture parent;
     private LocalDateTime updatedAt;
 
     @Builder.Default
-    private List<DriveItem> children = new ArrayList<>();
+    private List<DriveItemFixture> children = new ArrayList<>();
 
-    private DriveItem(String driveId, String fileName, Long size, String mimeType, String createdBy, DriveItem parent, ArrayList<DriveItem> children) {
-        this.id = UUID.randomUUID();
+    private DriveItemFixture(String driveId, String fileName, Long size, String mimeType, String createdBy, DriveItemFixture parent, ArrayList<DriveItemFixture> children) {
+        this.id = new DriveItemId();
         this.driveId = driveId;
         this.metadata = new FileMetadata(mimeType, fileName, size);
         this.createdAt = LocalDateTime.now();
@@ -46,10 +48,10 @@ public class DriveItem {
         this.children = children;
     }
 
-    public static DriveItem from(String driveId, String fileName, String mimeType, long size, DriveItem parent) {
-        return DriveItem.builder()
+    public static DriveItemFixture from(String driveId, String fileName, String mimeType, long size, DriveItemFixture parent) {
+        return DriveItemFixture.builder()
                 .driveId(driveId)
-                .id(UUID.randomUUID())
+                .id(new DriveItemId())
                 .metadata(new FileMetadata(mimeType, fileName, size))
                 .parent(parent)
                 .createdAt(LocalDateTime.now())
@@ -57,19 +59,19 @@ public class DriveItem {
                 .build();
     }
 
-    public static DriveItem of(UUID id,
-                               String driveId,
-                               String fileName,
-                               Long fileSize,
-                               String mimeType,
-                               LocalDateTime createdAt,
-                               LocalDateTime updatedAt,
-                               String createdBy,
-                               DriveItem parent,
-                               List<DriveItem> children) {
+    public static DriveItemFixture of(UUID id,
+                                      String driveId,
+                                      String fileName,
+                                      Long fileSize,
+                                      String mimeType,
+                                      LocalDateTime createdAt,
+                                      LocalDateTime updatedAt,
+                                      String createdBy,
+                                      DriveItemFixture parent,
+                                      List<DriveItemFixture> children) {
 
-        return DriveItem.builder()
-                .id(UUID.randomUUID())
+        return DriveItemFixture.builder()
+                .id(new DriveItemId(id))
                 .driveId(driveId)
                 .metadata(new FileMetadata(mimeType, fileName, fileSize))
                 .createdAt(createdAt)
@@ -80,18 +82,21 @@ public class DriveItem {
                 .build();
     }
 
-    public static DriveItem ofRoot(String driveId) {
-        log.info("[ofRoot] {}", driveId);
-        return DriveItem.builder()
-                .id(UUID.randomUUID())
+    public static DriveItemFixture ofRoot(String driveId) {
+        return DriveItemFixture.builder()
+                .id(new DriveItemId())
                 .metadata(FileMetadata.ofRoot())
                 .driveId(driveId)
                 .parent(null)
                 .build();
     }
 
+    public UUID getId() {
+        return id.getValue();
+    }
+
     public String getIdToString() {
-        return id.toString();
+        return id.getValue().toString();
     }
 
     public long getSize() {
@@ -106,18 +111,18 @@ public class DriveItem {
         return metadata.getMimeType();
     }
 
+    // fileKey 필드를 따로 두지않고 편의성 메서드로 관리하시 위한 메서드
+    public String fileKey() {
+        return this.driveId + "/files/" + this.id;
+    }
+
     public String getParentId() {
         return this.getParent().getIdToString();
     }
 
-    // fileKey 필드를 따로 두지않고 편의성 메서드로 관리하시 위한 메서드
-    public String fileKey(String prefix) {
-        return prefix + this.driveId + "/files/" + this.getId();
-    }
-
     // URL 생성을 위한 키 생성 편의성 메서드
-    public String thumbnailKey(String prefix) {
-        return "/" + prefix + "/" + id;
+    public String thumbnailKey() {
+        return "thumbnails/" + id;
     }
 
     /**
@@ -139,7 +144,7 @@ public class DriveItem {
      *
      * @param newParent
      */
-    public void moveTo(DriveItem newParent) {
+    public void moveTo(DriveItemFixture newParent) {
         if (!newParent.isFolder()) throw new IllegalArgumentException("Cannot move to file");
         this.parent = newParent;
     }

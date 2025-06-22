@@ -46,6 +46,7 @@ public class DriveItemRepositoryImpl implements DriveItemRepository {
 
     @Override
     public Optional<DriveItem> findById(String parentId) {
+        log.info("[findById()] {}", parentId);
         return Optional.empty();
     }
 

@@ -31,6 +31,9 @@ class JavaCommonConventionPlugin implements Plugin<Project> {
             add("testImplementation", "org.mockito:mockito-core:5.12.0")
             add("testImplementation", "org.assertj:assertj-core:3.25.3")
 
+            add("implementation", "org.slf4j:slf4j-api:2.0.13")
+            add("runtimeOnly", "ch.qos.logback:logback-classic:1.4.14")
+            add("testRuntimeOnly", "ch.qos.logback:logback-classic:1.4.14")
 
         }
 

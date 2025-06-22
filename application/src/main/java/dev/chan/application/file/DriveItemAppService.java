@@ -3,11 +3,13 @@ package dev.chan.application.file;
 import dev.chan.application.command.FolderCreateCommand;
 import dev.chan.application.command.UploadCallbackCommand;
 import dev.chan.application.exception.DriveItemNotFoundException;
+import dev.chan.application.vo.UploadCallbackResult;
 import dev.chan.domain.UploadedFileRegisteredEvent;
 import dev.chan.domain.file.DriveItem;
 import dev.chan.domain.file.DriveItemFactory;
 import dev.chan.domain.file.DriveItemRepository;
 import dev.chan.domain.publisher.DriveItemEventPublisher;
+import dev.chan.domain.userstate.UserItemState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,41 +18,48 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DriveItemService {
+public class DriveItemAppService {
 
     private final DriveItemRepository driveItemRepository;
     private final DriveItemEventPublisher domainEventPublisher;
 
     /**
-     * 업로드된 파일등록
+     * 업로드된 파일 데이터 등록
+     * presignedURL 생성시 미리 생성된 fileItem 정보를 repository 에 저장합니다.
      *
      * @param command
      * @return
      */
-    public DriveItem registerUploadedFile(UploadCallbackCommand command) {
+    public UploadCallbackResult registerUploadedFile(UploadCallbackCommand command) {
         log.info("[registerUploadedFile()] {}", command);
-
+        // Parent 조회. 없으면 ROOT 를 PARENT 로 등록
         DriveItem parent = driveItemRepository.findById(command.parentId())
                 .orElseGet(() -> DriveItem.ofRoot(command.driveId()));
 
-        DriveItem createdItem = DriveItemFactory.createFrom(
+        DriveItem uploadingItem = DriveItemFactory.createFrom(
                 command.driveId(),
+                parent,
+                command.fileId(),
                 command.mimeType(),
                 command.size(),
-                command.fileName());
+                command.fileName(),
+                command.userId()
+        );
 
-        createdItem.moveTo(parent);
-        DriveItem savedItem = driveItemRepository.save(createdItem);
-
-        // 썸네일 fileId 추론 및 생성
+        DriveItem savedItem = driveItemRepository.save(uploadingItem);
 
         // 파일 아이템 생성 완료 이벤트 등록
-        domainEventPublisher.publish(new UploadedFileRegisteredEvent(createdItem.getDriveId(),
-                createdItem.getParentId(),
-                createdItem.getIdToString()));
+        domainEventPublisher.publish(
+                new UploadedFileRegisteredEvent(savedItem.getDriveId(),
+                        savedItem.getParentId(),
+                        savedItem.getIdToString())
+        );
+
+        // user 별 item 상태 등록
+        UserItemState userItemState = UserItemState.create(savedItem.getId(), savedItem.getCreatedBy());
 
         // 파일 아이템 상태 등록
-        return savedItem;
+        return new UploadCallbackResult(savedItem, userItemState);
     }
 
     /**
@@ -72,6 +81,10 @@ public class DriveItemService {
                 .orElseThrow(() -> new DriveItemNotFoundException(item.getIdToString()));
     }
 
+    // 썸네일 생성전 클라이언트 응답을 위한 편의성 메서드
+    public String thumbnailUrl(DriveItem item) {
+        return null; // domain + "/" + item.thumbnailKey();
+    }
     /**
      * 업로드된 파일이 존재하지 않을 경우, 파일을 등록합니다.
      *

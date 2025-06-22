@@ -41,7 +41,7 @@ public class MemoryDriveItemRepository implements DriveItemRepository {
         return DriveItem.from(
                 "d1234",
                 "root",
-                MimeType.FOLDER,
+                MimeType.FOLDER.getMime(),
                 1234L,
                 null
         );
@@ -71,7 +71,7 @@ public class MemoryDriveItemRepository implements DriveItemRepository {
         log.info("[findByFileKey()] - fileKey[{}]", fileKey);
         log.info("[findByFileKey()] - values()={}", repository.values());
         return repository.values().stream()
-                .filter(item -> item.fileKey().equals(fileKey))
+                .filter(item -> item.fileKey("/uploads").equals(fileKey))
                 .findFirst();
     }
 }

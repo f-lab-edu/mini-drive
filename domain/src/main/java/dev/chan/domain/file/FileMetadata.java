@@ -13,8 +13,8 @@ public class FileMetadata {
     private final FileSize fileSize;
 
     @Builder
-    public FileMetadata(MimeType mimeType, String fileName, Long fileSize) {
-        this.mimeType = mimeType;
+    public FileMetadata(String mimeType, String fileName, Long fileSize) {
+        this.mimeType = MimeType.from(mimeType);
         this.fileName = new FileName(fileName);
         this.fileSize = new FileSize(fileSize);
     }
@@ -31,10 +31,13 @@ public class FileMetadata {
 
     public static FileMetadata ofRoot() {
         return FileMetadata.builder()
-                .mimeType(MimeType.FOLDER)
+                .mimeType(MimeType.FOLDER.getMime())
                 .fileName(FileName.ROOT_NAME)
-                .fileSize(null)
                 .build();
+    }
+
+    public static FileMetadata of(String fileName, Long size, String mimeType) {
+        return new FileMetadata(mimeType, fileName, size);
     }
 
     public long size() {
