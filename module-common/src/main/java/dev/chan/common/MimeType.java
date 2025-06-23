@@ -79,4 +79,13 @@ public enum MimeType {
                 .filter(m -> m.extension.equalsIgnoreCase(ext))
                 .findFirst();
     }
+
+    public boolean isThumbnailSupported() {
+        return switch (this) {
+            case JPEG, PNG, SVG, PDF, TEXT, MARKDOWN, CSV, TSV,
+                 WORD_DOCX, POWERPOINT_PPTX, EXCEL_XLSX,
+                 OPEN_DOCUMENT_TEXT, ODP, OPEN_DOCUMENT_SHEET -> true;
+            default -> false;
+        };
+    }
 }

@@ -1,0 +1,21 @@
+plugins {
+    id 'convention.spring-boot-starter'
+    id 'convention.kafka'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
+}
+
+dependencies {
+    implementation(project(":domain"))
+    implementation(project(":module-common"))
+}
+
+repositories {
+    mavenCentral()
+}

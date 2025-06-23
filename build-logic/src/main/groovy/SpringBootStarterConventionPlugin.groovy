@@ -13,6 +13,7 @@ class SpringBootStarterConventionPlugin implements Plugin<Project> {
         project.dependencies.with {
             add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
             add("implementation", "org.springframework.boot:spring-boot-starter")
+
         }
 
         project.tasks.withType(Test).configureEach {

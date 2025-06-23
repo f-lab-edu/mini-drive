@@ -26,7 +26,7 @@ gradlePlugin {
         }
 
         awsS3Convention {
-            id = 'convention.aws-s3'
+            id = 'convention.aws'
             implementationClass = "AwsS3ConventionPlugin"
         }
 
@@ -46,7 +46,7 @@ gradlePlugin {
         }
 
         testContainersConvention {
-            id = "convention.test-container"
+            id = "convention.testcontainers"
             implementationClass = "TestcontainersConventionPlugin"
         }
 
