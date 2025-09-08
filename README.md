@@ -14,7 +14,7 @@ Google Drive와 Dropbox 아키텍처를 벤치마킹하여 대용량 파일 업�
 프로젝트의 API 스펙문서는 아래 링크를 통해 확인하실 수 있습니다. 
 https://chan9301.notion.site/mini-Drive-API-1c9285ded97080fc86b8efffd98c845b?source=copy_link
 
-## 프로젝트 구조 - 2025.06.28 최종수정
+## 프로젝트 구조 - 2025.06.28 (진행중)
 프로젝트에 이해를 돕기위한 설계 구상도입니다.
 ![image](https://github.com/user-attachments/assets/c852ac1d-38b9-4eea-88a1-7af6695bfcdd)
 
