@@ -6,10 +6,7 @@ import dev.chan.application.command.UploadCallbackCommand;
 import dev.chan.application.vo.UploadCallbackResult;
 import dev.chan.common.MimeType;
 import dev.chan.domain.UploadedFileRegisteredEvent;
-import dev.chan.domain.file.DriveItem;
-import dev.chan.domain.file.DriveItemEventPublisher;
-import dev.chan.domain.file.DriveItemFactory;
-import dev.chan.domain.file.FileMetadata;
+import dev.chan.domain.file.*;
 import dev.chan.domain.userstate.UserItemState;
 import dev.chan.infrastructure.DriveItemMemoryRepository;
 import dev.chan.infrastructure.UserItemStateMemoryRepositoryImpl;
@@ -42,6 +39,10 @@ class DriveItemAppServiceTest {
     ThumbnailProperties thumbnailProperties;
 
     @Mock
+    ThumbnailGenerationPolicy thumbnailPolicy;
+
+
+    @Mock
     UserItemStateMemoryRepositoryImpl userItemStateRepository;
 
     @InjectMocks
@@ -69,7 +70,7 @@ class DriveItemAppServiceTest {
 
         doReturn(Optional.of(parent)).when(driveItemRepository).findById(any());
         doReturn(savedItem).when(driveItemRepository).save(any());
-        //doReturn(domain).when(thumbnailProperties).getDomain();
+        doReturn(domain).when(thumbnailProperties).getDomain();
 
         ArgumentCaptor<DriveItem> itemCaptor = ArgumentCaptor.forClass(DriveItem.class);
         ArgumentCaptor<UploadedFileRegisteredEvent> eventCaptor = ArgumentCaptor.forClass(UploadedFileRegisteredEvent.class);
@@ -81,6 +82,7 @@ class DriveItemAppServiceTest {
         // then
         verify(driveItemRepository, times(1)).save(itemCaptor.capture());
         verify(domainEventPublisher, times(1)).publish(eventCaptor.capture());
+        verify(thumbnailPolicy, times(1)).supports(savedItem.getMetadata().getMimeType());
 
         /*== save 함수 호출시 argument 검증 ==*/
         DriveItem actualItem = itemCaptor.getValue();

@@ -26,13 +26,13 @@ public class AwsConfig implements DisposableBean {
     private S3Presigner presigner;
 
     @ConditionalOnProperty(name = "aws.profile", havingValue = "local")
-    @Bean
+    @Bean(destroyMethod = "close")
     public S3Presigner LocalS3Presigner() {
         return S3Presigner.builder().region(Region.of(awsProperties.getRegion())).credentialsProvider(ProfileCredentialsProvider.create()).build();
     }
 
     @ConditionalOnProperty(name = "aws.profile", havingValue = "dev")
-    @Bean
+    @Bean(destroyMethod = "close")
     public S3Presigner devS3Presigner() {
         AwsBasicCredentials credentials = loadCredentialsFromSecretManager();
         this.presigner = S3Presigner.builder().region(Region.of(awsProperties.getRegion())).credentialsProvider(StaticCredentialsProvider.create(credentials)).build();
@@ -41,7 +41,7 @@ public class AwsConfig implements DisposableBean {
     }
 
     @ConditionalOnProperty(name = "aws.profile", havingValue = "prod")
-    @Bean
+    @Bean(destroyMethod = "close")
     public S3Presigner prodS3Presigner() {
         return S3Presigner.builder().region(Region.of(awsProperties.getRegion())).credentialsProvider(DefaultCredentialsProvider.create()).build();
     }

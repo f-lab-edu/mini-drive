@@ -33,17 +33,6 @@ public class DriveItem {
     @Builder.Default
     private List<DriveItem> children = new ArrayList<>();
 
-    private DriveItem(String driveId, String fileName, Long size, String mimeType, String createdBy, DriveItem parent, ArrayList<DriveItem> children) {
-        this.id = UUID.randomUUID();
-        this.driveId = driveId;
-        this.metadata = new FileMetadata(mimeType, fileName, size);
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.createdBy = createdBy;
-        this.parent = parent;
-        this.children = children;
-    }
-
     public static DriveItem from(String driveId, String fileName, String mimeType, long size, DriveItem parent) {
         return DriveItem.builder()
                 .driveId(driveId)
@@ -67,7 +56,7 @@ public class DriveItem {
                                List<DriveItem> children) {
 
         return DriveItem.builder()
-                .id(UUID.randomUUID())
+                .id(id)
                 .driveId(driveId)
                 .metadata(new FileMetadata(mimeType, fileName, fileSize))
                 .createdAt(createdAt)
@@ -145,5 +134,18 @@ public class DriveItem {
         if (!newParent.isFolder()) throw new IllegalArgumentException("Cannot move to file");
         this.parent = newParent;
     }
+
+    public void lock() {
+        this.locked = true;
+    }
+
+    public void unlock() {
+        this.locked = false;
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
 
 }
