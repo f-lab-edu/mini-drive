@@ -41,6 +41,7 @@ class DriveItemAppServiceTest {
     @Mock
     ThumbnailProperties thumbnailProperties;
 
+
     @Mock
     UserItemStateMemoryRepositoryImpl userItemStateRepository;
 
@@ -69,7 +70,6 @@ class DriveItemAppServiceTest {
 
         doReturn(Optional.of(parent)).when(driveItemRepository).findById(any());
         doReturn(savedItem).when(driveItemRepository).save(any());
-        //doReturn(domain).when(thumbnailProperties).getDomain();
 
         ArgumentCaptor<DriveItem> itemCaptor = ArgumentCaptor.forClass(DriveItem.class);
         ArgumentCaptor<UploadedFileRegisteredEvent> eventCaptor = ArgumentCaptor.forClass(UploadedFileRegisteredEvent.class);

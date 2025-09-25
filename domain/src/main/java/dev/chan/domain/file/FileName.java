@@ -9,9 +9,8 @@ public class FileName {
     private final String fullName;
 
     public FileName(String fullName) {
-        if (fullName == null) {
+        if (fullName == null)
             throw new IllegalArgumentException("파일 이름은 null이거나 비어 있을 수 없습니다.");
-        }
         this.fullName = fullName;
     }
 
