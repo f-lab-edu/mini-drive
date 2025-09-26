@@ -4,7 +4,6 @@ package dev.chan.api;
 import dev.chan.api.file.DriveItemController;
 import dev.chan.application.file.DriveItemAppService;
 import dev.chan.application.file.PresignedUrlService;
-import dev.chan.common.exception.GlobalExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

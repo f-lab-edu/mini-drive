@@ -1,7 +1,7 @@
 package dev.chan.api.file;
 
-import dev.chan.api.file.request.PresignedUrlRequest;
-import dev.chan.api.file.request.UploadCallbackRequest;
+import dev.chan.api.file.dto.PresignedUrlRequest;
+import dev.chan.api.file.dto.UploadCallbackRequest;
 import dev.chan.application.file.DriveItemAppService;
 import dev.chan.application.file.PresignedUrlResponse;
 import dev.chan.application.file.PresignedUrlService;

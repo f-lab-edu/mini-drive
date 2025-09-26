@@ -1,7 +1,7 @@
 package dev.chan.api;
 
-import dev.chan.api.file.request.FileMetaDataDto;
-import dev.chan.application.command.PresignedUrlCommand;
+import dev.chan.api.file.dto.FileMetaDataDto;
+import dev.chan.application.dto.PresignedUrlCommand;
 import dev.chan.application.file.PresignedUrlResponse;
 import dev.chan.application.file.PresignedUrlService;
 import lombok.extern.slf4j.Slf4j;

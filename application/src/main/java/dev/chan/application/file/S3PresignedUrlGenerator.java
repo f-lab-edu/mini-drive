@@ -1,6 +1,6 @@
 package dev.chan.application.file;
 
-import dev.chan.application.command.PresignedUrlSpecification;
+import dev.chan.application.dto.PresignedUrlSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

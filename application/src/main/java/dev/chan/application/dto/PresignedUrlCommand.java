@@ -1,7 +1,7 @@
-package dev.chan.application.command;
+package dev.chan.application.dto;
 
 
-import dev.chan.api.file.request.FileMetaDataDto;
+import dev.chan.api.file.dto.FileMetaDataDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

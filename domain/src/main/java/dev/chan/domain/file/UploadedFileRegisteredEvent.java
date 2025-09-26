@@ -1,4 +1,4 @@
-package dev.chan.domain;
+package dev.chan.domain.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

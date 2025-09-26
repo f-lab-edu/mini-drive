@@ -1,6 +1,6 @@
-package dev.chan.api.file.request;
+package dev.chan.api.file.dto;
 
-import dev.chan.application.command.UploadCallbackCommand;
+import dev.chan.application.dto.UploadCallbackCommand;
 import lombok.*;
 
 @Getter

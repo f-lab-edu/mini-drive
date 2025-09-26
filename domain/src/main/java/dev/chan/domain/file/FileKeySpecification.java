@@ -1,4 +1,4 @@
-package dev.chan.domain;
+package dev.chan.domain.file;
 
 
 public record FileKeySpecification(String driveId, String uploadPrefix, String fileName) {

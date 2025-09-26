@@ -1,4 +1,4 @@
-package dev.chan.application.vo;
+package dev.chan.application.dto;
 
 import dev.chan.domain.file.FileMetadata;
 

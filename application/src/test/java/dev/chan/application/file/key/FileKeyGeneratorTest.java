@@ -1,7 +1,7 @@
 package dev.chan.application.file.key;
 
 import dev.chan.application.file.S3KeyGenerator;
-import dev.chan.domain.FileKeySpecification;
+import dev.chan.domain.file.FileKeySpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

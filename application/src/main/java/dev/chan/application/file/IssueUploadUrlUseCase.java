@@ -1,7 +1,7 @@
 package dev.chan.application.file;
 
 import dev.chan.application.dto.IssueUploadUrlCommand;
-import dev.chan.application.vo.UploadTicket;
+import dev.chan.application.dto.UploadTicket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

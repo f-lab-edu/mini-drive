@@ -1,4 +1,4 @@
-package dev.chan.domain;
+package dev.chan.domain.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
