@@ -1,6 +1,6 @@
-package dev.chan.api.file.request;
+package dev.chan.api.file.dto;
 
-import dev.chan.application.command.PresignedUrlCommand;
+import dev.chan.application.dto.PresignedUrlCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

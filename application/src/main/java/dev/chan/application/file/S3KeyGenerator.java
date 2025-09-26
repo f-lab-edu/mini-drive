@@ -1,6 +1,6 @@
 package dev.chan.application.file;
 
-import dev.chan.domain.FileKeySpecification;
+import dev.chan.domain.file.FileKeySpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

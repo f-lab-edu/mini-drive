@@ -1,4 +1,4 @@
-package dev.chan.application.command;
+package dev.chan.application.dto;
 
 public record UploadCallbackCommand(
         String mimeType,

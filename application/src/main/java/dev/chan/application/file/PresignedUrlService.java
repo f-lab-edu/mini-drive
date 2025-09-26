@@ -1,9 +1,9 @@
 package dev.chan.application.file;
 
-import dev.chan.application.command.PresignedUrlCommand;
-import dev.chan.application.command.PresignedUrlSpecification;
+import dev.chan.application.dto.PresignedUrlCommand;
+import dev.chan.application.dto.PresignedUrlSpecification;
 import dev.chan.common.util.ThreadPoolLogger;
-import dev.chan.domain.FileKeySpecification;
+import dev.chan.domain.file.FileKeySpecification;
 import dev.chan.infra.config.AwsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

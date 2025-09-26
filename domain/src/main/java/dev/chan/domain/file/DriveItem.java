@@ -1,6 +1,7 @@
 package dev.chan.domain.file;
 
 import dev.chan.common.MimeType;
+import dev.chan.domain.thumbnail.Thumbnail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

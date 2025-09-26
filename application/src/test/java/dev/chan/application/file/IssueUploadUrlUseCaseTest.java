@@ -2,7 +2,7 @@ package dev.chan.application.file;
 
 import dev.chan.application.CommandMother;
 import dev.chan.application.dto.IssueUploadUrlCommand;
-import dev.chan.application.vo.UploadTicket;
+import dev.chan.application.dto.UploadTicket;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

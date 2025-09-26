@@ -1,4 +1,4 @@
-package dev.chan.common.response;
+package dev.chan.api.dto;
 
 import lombok.Builder;
 import lombok.Getter;

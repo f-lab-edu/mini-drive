@@ -1,4 +1,4 @@
-package dev.chan.api.file.request;
+package dev.chan.api.file.dto;
 
 import dev.chan.domain.file.FileMetadata;
 import lombok.*;

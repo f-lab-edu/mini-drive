@@ -1,7 +1,7 @@
 package dev.chan.application.file;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import dev.chan.application.command.PresignedUrlSpecification;
+import dev.chan.application.dto.PresignedUrlSpecification;
 import dev.chan.common.MimeType;
 
 import java.time.Instant;

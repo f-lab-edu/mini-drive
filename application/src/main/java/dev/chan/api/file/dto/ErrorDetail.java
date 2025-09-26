@@ -1,4 +1,4 @@
-package dev.chan.api.file.response;
+package dev.chan.api.file.dto;
 
 public class ErrorDetail {
     String field;

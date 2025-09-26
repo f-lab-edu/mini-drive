@@ -1,4 +1,4 @@
-package dev.chan.domain.file;
+package dev.chan.domain.thumbnail;
 
 import dev.chan.common.MimeType;
 
